@@ -1,0 +1,30 @@
+{
+  "id": "Newsletter.Component.Route",
+  "configId": "Newsletter.Configuration.json",
+  "schema": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "description": "Newsletter section title"
+    },
+    "description": {
+      "type": "string",
+      "required": false,
+      "description": "Newsletter description"
+    },
+    "placeholder": {
+      "type": "string",
+      "required": false,
+      "description": "Input placeholder text"
+    },
+    "buttonText": {
+      "type": "string",
+      "required": true,
+      "description": "Subscribe button text"
+    }
+  },
+  "behavior": {
+    "validateEmail": true,
+    "showSuccessMessage": true
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "HowItWorks.Component.Route",
+  "configId": "HowItWorks.Configuration.json",
+  "schema": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "description": "Section title"
+    },
+    "subtitle": {
+      "type": "string",
+      "required": false,
+      "description": "Section subtitle"
+    },
+    "steps": {
+      "type": "array",
+      "required": true,
+      "description": "Array of process steps"
+    }
+  },
+  "behavior": {
+    "showStepNumbers": true,
+    "animateOnScroll": true
+  }
+}

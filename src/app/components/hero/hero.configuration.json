@@ -1,0 +1,37 @@
+{
+  "id": "Hero.Component.Route",
+  "configId": "Hero.Configuration.json",
+  "schema": {
+    "headline": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "description": "Main hero headline"
+    },
+    "subtext": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300,
+      "description": "Supporting text below headline"
+    },
+    "primaryButton": {
+      "type": "object",
+      "required": true,
+      "description": "Primary CTA button"
+    },
+    "secondaryButton": {
+      "type": "object",
+      "required": false,
+      "description": "Secondary CTA button"
+    },
+    "image": {
+      "type": "string",
+      "required": false,
+      "description": "Hero image URL"
+    }
+  },
+  "behavior": {
+    "animateOnScroll": true,
+    "parallaxEffect": false
+  }
+}

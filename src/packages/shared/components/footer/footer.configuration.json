@@ -1,0 +1,35 @@
+{
+  "id": "Footer.Component.Route",
+  "configId": "Footer.Configuration.json",
+  "schema": {
+    "copyrightText": {
+      "type": "string",
+      "required": true,
+      "description": "Copyright notice text"
+    },
+    "actions": {
+      "type": "array",
+      "required": false,
+      "description": "Footer navigation links",
+      "itemSchema": {
+        "label": {
+          "type": "string",
+          "required": true
+        },
+        "action": {
+          "type": "string",
+          "required": true
+        },
+        "visible": {
+          "type": "boolean",
+          "required": false,
+          "default": true
+        }
+      }
+    }
+  },
+  "behavior": {
+    "filterInvisibleActions": true,
+    "layout": "horizontal"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "id": "LandingPage.Component.Route",
+  "configId": "LandingPage.Configuration.json",
+  "title": "BestReads - Discover Your Next Favorite Book",
+  "description": "Landing page for BestReads platform",
+  "components": [
+    {
+      "id": "Header.Component.Route",
+      "configId": "Header.Configuration.json",
+      "order": 1,
+      "visible": true,
+      "props": {}
+    },
+    {
+      "id": "Hero.Component.Route",
+      "configId": "Hero.Configuration.json",
+      "order": 2,
+      "visible": true,
+      "props": {}
+    },
+    {
+      "id": "Features.Component.Route",
+      "configId": "Features.Configuration.json",
+      "order": 3,
+      "visible": true,
+      "props": {}
+    },
+    {
+      "id": "HowItWorks.Component.Route",
+      "configId": "HowItWorks.Configuration.json",
+      "order": 4,
+      "visible": true,
+      "props": {}
+    },
+    {
+      "id": "Testimonials.Component.Route",
+      "configId": "Testimonials.Configuration.json",
+      "order": 5,
+      "visible": true,
+      "props": {}
+    },
+    {
+      "id": "Integrations.Component.Route",
+      "configId": "Integrations.Configuration.json",
+      "order": 6,
+      "visible": true,
+      "props": {}
+    },
+    {
+      "id": "Newsletter.Component.Route",
+      "configId": "Newsletter.Configuration.json",
+      "order": 7,
+      "visible": true,
+      "props": {}
+    },
+    {
+      "id": "Footer.Component.Route",
+      "configId": "Footer.Configuration.json",
+      "order": 8,
+      "visible": true,
+      "props": {}
+    }
+  ],
+  "meta": {
+    "seo": {
+      "title": "BestReads - Discover Your Next Favorite Book",
+      "description": "Join BestReads to discover, track, and share your reading journey with millions of readers worldwide.",
+      "keywords": ["books", "reading", "book tracking", "book recommendations"]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "Integrations.Component.Route",
+  "configId": "Integrations.Configuration.json",
+  "schema": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "description": "Section title"
+    },
+    "subtitle": {
+      "type": "string",
+      "required": false,
+      "description": "Section subtitle"
+    },
+    "integrations": {
+      "type": "array",
+      "required": true,
+      "description": "Array of integration platforms"
+    }
+  },
+  "behavior": {
+    "animateOnScroll": true
+  }
+}

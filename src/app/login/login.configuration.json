@@ -1,0 +1,26 @@
+{
+  "id": "LoginPage.Component.Route",
+  "configId": "LoginPage.Configuration.json",
+  "title": "Login - BestReads",
+  "description": "Login page for BestReads platform",
+  "components": [
+    {
+      "id": "auth",
+      "configId": "auth.route",
+      "order": 1,
+      "visible": true,
+      "props": {
+        "mode": "login"
+      }
+    }
+  ],
+  "meta": {
+    "seo": {
+      "title": "Login - BestReads",
+      "description": "Login to your BestReads account",
+      "keywords": ["login", "sign in", "account"]
+    },
+    "requiresAuth": false,
+    "redirectIfAuthenticated": "/dashboard"
+  }
+}

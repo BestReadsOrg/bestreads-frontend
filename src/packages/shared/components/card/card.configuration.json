@@ -1,0 +1,52 @@
+{
+  "id": "Card.Component.Route",
+  "configId": "Card.Configuration.json",
+  "schema": {
+    "title": {
+      "type": "string",
+      "required": false,
+      "description": "Card title"
+    },
+    "description": {
+      "type": "string",
+      "required": false,
+      "description": "Card description or body text"
+    },
+    "icon": {
+      "type": "string",
+      "required": false,
+      "description": "Icon identifier or emoji"
+    },
+    "image": {
+      "type": "string",
+      "required": false,
+      "description": "Image URL"
+    },
+    "variant": {
+      "type": "string",
+      "enum": ["default", "bordered", "elevated", "flat"],
+      "default": "default",
+      "description": "Visual variant"
+    },
+    "padding": {
+      "type": "string",
+      "enum": ["none", "sm", "md", "lg"],
+      "default": "md",
+      "description": "Card padding"
+    },
+    "hoverable": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether card has hover effect"
+    },
+    "clickable": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether card is clickable"
+    }
+  },
+  "behavior": {
+    "animateOnHover": true,
+    "lazyLoadImages": true
+  }
+}

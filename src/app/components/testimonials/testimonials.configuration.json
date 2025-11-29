@@ -1,0 +1,25 @@
+{
+  "id": "Testimonials.Component.Route",
+  "configId": "Testimonials.Configuration.json",
+  "schema": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "description": "Section title"
+    },
+    "subtitle": {
+      "type": "string",
+      "required": false,
+      "description": "Section subtitle"
+    },
+    "testimonials": {
+      "type": "array",
+      "required": true,
+      "description": "Array of testimonials"
+    }
+  },
+  "behavior": {
+    "showRatings": true,
+    "maxTestimonials": 6
+  }
+}

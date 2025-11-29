@@ -1,0 +1,25 @@
+{
+  "id": "Features.Component.Route",
+  "configId": "Features.Configuration.json",
+  "schema": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "description": "Section title"
+    },
+    "subtitle": {
+      "type": "string",
+      "required": false,
+      "description": "Section subtitle"
+    },
+    "features": {
+      "type": "array",
+      "required": true,
+      "description": "Array of feature cards"
+    }
+  },
+  "behavior": {
+    "animateOnScroll": true,
+    "maxFeatures": 6
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "id": "BestReads.Application",
+  "name": "BestReads",
+  "version": "1.0.0",
+  "metadata": {
+    "title": "BestReads - Your Personal Reading Companion",
+    "description": "Track your reading progress, discover personalized recommendations, and gain insights from your reading journey.",
+    "keywords": ["reading", "books", "tracking", "recommendations", "reading analytics"],
+    "author": "BestReads Team",
+    "siteUrl": "https://bestreads.com",
+    "socialMedia": {
+      "twitter": "@bestreads",
+      "facebook": "bestreads",
+      "instagram": "bestreads"
+    }
+  },
+  "theme": {
+    "primaryColor": "#2563EB",
+    "secondaryColor": "#7C3AED",
+    "accentColor": "#10B981",
+    "fonts": {
+      "sans": "Geist Sans",
+      "mono": "Geist Mono"
+    }
+  },
+  "features": {
+    "authentication": true,
+    "analytics": true,
+    "recommendations": true,
+    "socialSharing": true,
+    "darkMode": false
+  },
+  "api": {
+    "baseUrl": "http://localhost:8080/api",
+    "timeout": 30000
+  }
+}

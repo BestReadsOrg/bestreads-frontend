@@ -1,0 +1,48 @@
+{
+  "id": "Button.Component.Route",
+  "configId": "Button.Configuration.json",
+  "schema": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Button text label"
+    },
+    "action": {
+      "type": "string",
+      "required": true,
+      "description": "Action identifier"
+    },
+    "variant": {
+      "type": "string",
+      "enum": ["primary", "secondary", "outline", "ghost", "danger"],
+      "default": "primary",
+      "description": "Visual variant of the button"
+    },
+    "size": {
+      "type": "string",
+      "enum": ["sm", "md", "lg"],
+      "default": "md",
+      "description": "Button size"
+    },
+    "icon": {
+      "type": "string",
+      "required": false,
+      "description": "Optional icon identifier"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether button is disabled"
+    },
+    "loading": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether button is in loading state"
+    }
+  },
+  "behavior": {
+    "rippleEffect": true,
+    "preventDoubleClick": true,
+    "showLoadingSpinner": true
+  }
+}

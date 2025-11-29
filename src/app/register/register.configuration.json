@@ -1,0 +1,26 @@
+{
+  "id": "RegisterPage.Component.Route",
+  "configId": "RegisterPage.Configuration.json",
+  "title": "Register - BestReads",
+  "description": "Registration page for BestReads platform",
+  "components": [
+    {
+      "id": "auth",
+      "configId": "auth.route",
+      "order": 1,
+      "visible": true,
+      "props": {
+        "mode": "register"
+      }
+    }
+  ],
+  "meta": {
+    "seo": {
+      "title": "Create Account - BestReads",
+      "description": "Create your BestReads account and start your reading journey",
+      "keywords": ["register", "sign up", "create account"]
+    },
+    "requiresAuth": false,
+    "redirectIfAuthenticated": "/dashboard"
+  }
+}
