@@ -18,8 +18,7 @@ import buttonConfig from '@/packages/shared/components/button/button.configurati
 import cardConfig from '@/packages/shared/components/card/card.configuration.json';
 
 import heroConfig from '@/app/components/hero/hero.configuration.json';
-import authConfig from '@/app/components/auth/auth.configuration.json';
-import loginComponentConfig from '@/app/components/login-component/login.configuration.json';
+import authConfig from '@/app/auth/auth.configuration.json';
 import featuresConfig from '@/app/components/features/features.configuration.json';
 import howItWorksConfig from '@/app/components/how-it-works/how-it-works.configuration.json';
 import testimonialsConfig from '@/app/components/testimonials/testimonials.configuration.json';
@@ -67,11 +66,6 @@ const LOCAL_CONFIG_MAP: Record<string, any> = {
   'auth.route': authConfig,
   'Auth.Component.Route': authConfig,
   'auth': authConfig,
-  
-  'login.route': loginComponentConfig,
-  'Login.Component.Route': loginComponentConfig,
-  'login': loginComponentConfig,
-  'Login': loginComponentConfig,
   
   'features.route': featuresConfig,
   'Features.Component.Route': featuresConfig,
@@ -126,13 +120,12 @@ const CONFIG_ROUTES: Record<string, string> = {
   
   // App components
   'hero.route': 'app/components/hero/hero',
-  'auth.route': 'app/components/auth/auth',
+  'auth.route': 'app/auth/auth',
   'features.route': 'app/components/features/features',
   'how-it-works.route': 'app/components/how-it-works/how-it-works',
   'testimonials.route': 'app/components/testimonials/testimonials',
   'integrations.route': 'app/components/integrations/integrations',
   'newsletter.route': 'app/components/newsletter/newsletter',
-  'login.route': 'app/components/login-component/login',
   
   // Page configurations
   'landing.page': 'app/landing/landing',

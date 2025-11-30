@@ -1,65 +1,42 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Section } from '@/packages/shared/components/layout';
+import { getConfig } from '@/utils/getConfig';
+import { IntegrationsConfig } from './integrations.types';
 
-interface Integration {
-  id: string;
-  name: string;
-  icon: string;
-  description: string;
-}
-
-const integrations: Integration[] = [
-  {
-    id: 'goodreads',
-    name: 'Goodreads',
-    icon: '📚',
-    description: 'Import your Goodreads library seamlessly'
-  },
-  {
-    id: 'kindle',
-    name: 'Kindle',
-    icon: '📱',
-    description: 'Sync your Kindle highlights and notes'
-  },
-  {
-    id: 'pdf',
-    name: 'PDF Files',
-    icon: '📄',
-    description: 'Upload and track PDF documents'
-  },
-  {
-    id: 'epub',
-    name: 'EPUB Files',
-    icon: '📖',
-    description: 'Support for EPUB format books'
-  },
-  {
-    id: 'openlibrary',
-    name: 'Open Library',
-    icon: '🌐',
-    description: 'Access millions of book records'
-  },
-  {
-    id: 'googlebooks',
-    name: 'Google Books',
-    icon: '🔍',
-    description: 'Search and import from Google Books'
-  }
-];
 
 export const Integrations: React.FC = () => {
+  const [config, setConfig] = useState<IntegrationsConfig | null>(null);
+
+  useEffect(() => {
+    async function loadConfig() {
+      try {
+        const loadedConfig = await getConfig('Integrations.Component.Route') as unknown as IntegrationsConfig;
+        setConfig(loadedConfig);
+      } catch (error) {
+        console.error('Failed to load integrations configuration:', error);
+      }
+    }
+    loadConfig();
+  }, []);
+
+  const componentTitle = config?.data?.title || 'Connect with Your Favorite Platforms';
+  const componentSubtitle = config?.data?.subtitle || 'Integrations';
+  const componentDescription = config?.data?.description || 'Seamlessly integrate with popular reading platforms and import your existing library.';
+  const componentBackground = config?.data?.background || 'white';
+  const componentIntegrations = config?.data?.integrations || [];
+
   return (
     <Section
       id="integrations"
-      subtitle="Integrations"
-      title="Connect with Your Favorite Platforms"
-      description="Seamlessly integrate with popular reading platforms and import your existing library."
-      background="white"
+      subtitle={componentSubtitle}
+      title={componentTitle}
+      description={componentDescription}
+      background={componentBackground}
     >
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-        {integrations.map((integration) => (
+        {componentIntegrations.map((integration) => (
           <div
             key={integration.id}
             className="flex flex-col items-center text-center p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all duration-300 cursor-pointer"

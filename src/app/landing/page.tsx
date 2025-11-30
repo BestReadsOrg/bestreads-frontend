@@ -6,9 +6,7 @@ import { getConfig, isPageConfig } from '@/utils/getConfig';
 import { PageRenderer } from '@/components/PageRenderer';
 import { LoadingSkeleton } from '@/packages/shared/components/loading/loading.component';
 import { ErrorDisplay } from '@/packages/shared/components/error/error.component';
-import { headerData } from '@/packages/shared/components/header';
-import { footerData } from '@/packages/shared/components/footer';
-import { heroData } from '@/app/components/hero';
+import { ScrollToTop } from '@/packages/shared/components/scroll-to-top';
 import { featureCards, testimonials } from '@/packages/shared/components/card';
 
 interface LandingPageProps {
@@ -56,14 +54,11 @@ export default function LandingPage({ pageId = 'landing.page' }: LandingPageProp
     );
   }
 
-  // Component data mapping - in production, this would come from API/CMS
-  // TODO: remove datasource and mockData for which only configuration is enough (no user/statistics related data)
+  // Only pass dynamic data that can't come from configuration (user-specific or API data)
+  // Components will read their static content from their respective configuration files
   const componentData = {
-    header: headerData,
-    hero: heroData,
-    features: { features: featureCards },
-    testimonials: { testimonials },
-    footer: footerData,
+    'Features.Component.Route': { features: featureCards },
+    'Testimonials.Component.Route': { testimonials },
   };
 
   return (
@@ -72,6 +67,7 @@ export default function LandingPage({ pageId = 'landing.page' }: LandingPageProp
         pageConfig={pageConfig} 
         componentData={componentData}
       />
+      <ScrollToTop />
     </main>
   );
 }

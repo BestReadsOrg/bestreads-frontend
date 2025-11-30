@@ -1,0 +1,101 @@
+{
+  "id": "ProfileDropdown.Component",
+  "configId": "ProfileDropdown.Configuration.json",
+  "menuItems": [
+    {
+      "id": "profile",
+      "label": "My Profile",
+      "icon": "👤",
+      "action": "navigate",
+      "path": "/profile"
+    },
+    {
+      "id": "my-books",
+      "label": "My Books",
+      "icon": "📚",
+      "action": "navigate",
+      "path": "/my-books"
+    },
+    {
+      "id": "reading-list",
+      "label": "Reading List",
+      "icon": "📖",
+      "action": "navigate",
+      "path": "/reading-list"
+    },
+    {
+      "id": "friends",
+      "label": "Friends",
+      "icon": "👥",
+      "action": "navigate",
+      "path": "/friends"
+    },
+    {
+      "id": "divider-1",
+      "label": "",
+      "icon": "",
+      "action": "navigate",
+      "divider": true
+    },
+    {
+      "id": "settings",
+      "label": "Settings",
+      "icon": "⚙️",
+      "action": "navigate",
+      "path": "/settings"
+    },
+    {
+      "id": "divider-2",
+      "label": "",
+      "icon": "",
+      "action": "navigate",
+      "divider": true
+    },
+    {
+      "id": "logout",
+      "label": "Logout",
+      "icon": "🚪",
+      "action": "logout"
+    }
+  ],
+  "schema": {
+    "menuItems": {
+      "type": "array",
+      "required": true,
+      "description": "Array of menu items to display in the dropdown",
+      "itemSchema": {
+        "id": {
+          "type": "string",
+          "required": true
+        },
+        "label": {
+          "type": "string",
+          "required": true
+        },
+        "icon": {
+          "type": "string",
+          "required": false
+        },
+        "action": {
+          "type": "string",
+          "required": true,
+          "enum": ["navigate", "logout"]
+        },
+        "path": {
+          "type": "string",
+          "required": false,
+          "description": "Required when action is navigate"
+        },
+        "divider": {
+          "type": "boolean",
+          "required": false,
+          "default": false
+        }
+      }
+    }
+  },
+  "behavior": {
+    "closeOnClick": true,
+    "closeOnClickOutside": true
+  }
+}

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useAuth from '@/hooks/useAuth';
-import { AuthForm, defaultRegisterData, passwordRequirements } from '@/app/components/auth';
+import { AuthForm, defaultRegisterData, passwordRequirements } from '@/app/auth';
 
 /**
  * Register Page

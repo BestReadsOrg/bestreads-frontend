@@ -7,7 +7,10 @@
 export interface HeaderAction {
   label: string;
   action: string;
+  type: 'scroll' | 'route' | 'external';
+  target: string;
   visible: boolean;
+  roles?: string[];
 }
 
 /**

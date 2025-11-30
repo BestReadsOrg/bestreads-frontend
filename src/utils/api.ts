@@ -1,7 +1,8 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 // API Configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
+// Backend runs on port 8080 with /api context path
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
@@ -40,11 +41,13 @@ apiClient.interceptors.response.use(
         const refreshToken = localStorage.getItem('refreshToken');
         if (refreshToken) {
           // Attempt to refresh token
-          const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+          const response = await axios.post(
+            `${API_BASE_URL}/auth/refresh`, 
             refreshToken,
-          });
+            { headers: { 'Content-Type': 'text/plain' } }
+          );
 
-          const { token, refreshToken: newRefreshToken } = response.data;
+          const { token, refreshToken: newRefreshToken } = response.data.data;
 
           // Store new tokens
           localStorage.setItem('accessToken', token);

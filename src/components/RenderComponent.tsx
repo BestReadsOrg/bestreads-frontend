@@ -6,7 +6,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { BaseComponentConfig, RenderComponentProps } from '@/types/config.types';
+import { BaseComponentConfig, PageConfig, RenderComponentProps } from '@/types/config.types';
 import { getConfig } from '@/utils/getConfig';
 import { getComponent } from '@/registry/componentsRegistry';
 
@@ -75,7 +75,7 @@ export function RenderComponent({
   props = {}, 
   fallback 
 }: RenderComponentProps): React.ReactElement {
-  const [config, setConfig] = useState<BaseComponentConfig | null>(null);
+  const [config, setConfig] = useState<BaseComponentConfig | PageConfig | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

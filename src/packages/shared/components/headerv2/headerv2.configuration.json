@@ -4,28 +4,28 @@
   "title": "BestReads",
   "actions": [
     {
-      "label": "Home",
-      "action": "navigateHome",
-      "visible": true,
-      "roles": ["guest", "user", "admin"]
-    },
-    {
       "label": "My Books",
       "action": "navigateBooks",
+      "type": "route",
+      "target": "/books",
+      "visible": true,
+      "roles": ["user", "admin"]
+    },
+    {
+      "label": "My Friends",
+      "action": "navigateFriends",
+      "type": "route",
+      "target": "/friends",
       "visible": true,
       "roles": ["user", "admin"]
     },
     {
       "label": "Profile",
       "action": "navigateProfile",
+      "type": "route",
+      "target": "/profile",
       "visible": true,
       "roles": ["user", "admin"]
-    },
-    {
-      "label": "Admin",
-      "action": "navigateAdmin",
-      "visible": true,
-      "roles": ["admin"]
     }
   ],
   "schema": {

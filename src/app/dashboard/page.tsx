@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation';
 import { Container } from '@/packages/shared/components/layout';
 import { Button } from '@/packages/shared/components/button';
 import { LoadingSkeleton } from '@/packages/shared/components/loading/loading.component';
-import { ErrorDisplay } from '@/packages/shared/components/error/error.component';
+import { HeaderV2 } from '@/packages/shared/components/headerv2';
 import useAuth from '@/hooks/useAuth';
 import bookService, { Book } from '@/services/bookService';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, logout, isAuthenticated, loading: authLoading } = useAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -40,11 +40,6 @@ export default function DashboardPage() {
     }
   }, [isAuthenticated, authLoading, router]);
 
-  const handleLogout = () => {
-    logout();
-    router.push('/landing');
-  };
-
   // Show loading state
   if (authLoading || (loading && isAuthenticated)) {
     return <LoadingSkeleton variant="page" message="Loading your dashboard..." />;
@@ -56,31 +51,30 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <Container>
-          <div className="py-4 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                📚 BestReads Dashboard
-              </h1>
-              <p className="text-sm text-gray-600">
-                Welcome back, {user?.username || 'Reader'}!
-              </p>
-            </div>
-            <Button
-              label="Logout"
-              action="logout"
-              variant="outline"
-              size="md"
-              onClick={handleLogout}
-            />
-          </div>
-        </Container>
-      </header>
+      {/* Header with Search and Profile */}
+      <HeaderV2
+        title="BestReads"
+        userData={{
+          userId: user?.id || null,
+          username: user?.username || null,
+          email: user?.email || null,
+          role: 'user',
+          avatar: null,
+        }}
+      />
 
       {/* Main Content */}
       <Container className="py-8">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome back, {user?.username || 'Reader'}! 📚
+          </h1>
+          <p className="text-gray-600">
+            Here's your reading dashboard and progress
+          </p>
+        </div>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-md p-6">
@@ -124,7 +118,7 @@ export default function DashboardPage() {
               variant="primary"
               size="md"
               icon="+"
-              onClick={() => alert('Add book functionality coming soon!')}
+              onClick={() => router.push('/search')}
             />
           </div>
 
@@ -144,12 +138,12 @@ export default function DashboardPage() {
                 Start building your reading library by adding your first book!
               </p>
               <Button
-                label="Add Your First Book"
-                action="add-first-book"
+                label="Search for Books"
+                action="search-books"
                 variant="primary"
                 size="lg"
-                icon="+"
-                onClick={() => alert('Add book functionality coming soon!')}
+                icon="🔍"
+                onClick={() => router.push('/search')}
               />
             </div>
           ) : (

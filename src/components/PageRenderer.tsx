@@ -45,7 +45,7 @@ export const PageRenderer: React.FC<PageRendererProps> = ({
           ...componentConfig.props,
           ...(componentData[componentConfig.id] || {})
         };
-        // TODO: Coming as {} - investigate
+
         // console.log('Rendering component with props:', componentProps);
 
         return (

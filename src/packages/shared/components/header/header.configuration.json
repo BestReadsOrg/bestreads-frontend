@@ -6,26 +6,50 @@
     {
       "label": "Home",
       "action": "navigateHome",
+      "type": "scroll",
+      "target": "top",
       "visible": true,
       "roles": ["guest", "user", "admin"]
     },
     {
-      "label": "My Books",
-      "action": "navigateBooks",
+      "label": "Features",
+      "action": "navigateFeatures",
+      "type": "scroll",
+      "target": "features",
       "visible": true,
-      "roles": ["user", "admin"]
+      "roles": ["guest", "user", "admin"]
     },
     {
-      "label": "Profile",
-      "action": "navigateProfile",
+      "label": "How It Works",
+      "action": "navigateHowItWorks",
+      "type": "scroll",
+      "target": "how-it-works",
       "visible": true,
-      "roles": ["user", "admin"]
+      "roles": ["guest", "user", "admin"]
     },
     {
-      "label": "Admin",
-      "action": "navigateAdmin",
+      "label": "Testimonials",
+      "action": "navigateTestimonials",
+      "type": "scroll",
+      "target": "testimonials",
       "visible": true,
-      "roles": ["admin"]
+      "roles": ["guest", "user", "admin"]
+    },
+    {
+      "label": "Integrations",
+      "action": "navigateIntegrations",
+      "type": "scroll",
+      "target": "integrations",
+      "visible": true,
+      "roles": ["guest", "user", "admin"]
+    },
+    {
+      "label": "Login",
+      "action": "navigateLogin",
+      "type": "route",
+      "target": "/login",
+      "visible": true,
+      "roles": ["guest"]
     }
   ],
   "schema": {
@@ -41,21 +65,35 @@
       "itemSchema": {
         "label": {
           "type": "string",
-          "required": true
+          "required": true,
+          "description": "Display text for the action"
         },
         "action": {
           "type": "string",
-          "required": true
+          "required": true,
+          "description": "Unique action identifier"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["scroll", "route", "external"],
+          "required": true,
+          "description": "Type of navigation: scroll (section), route (internal page), external (new tab)"
+        },
+        "target": {
+          "type": "string",
+          "required": true,
+          "description": "Navigation target: element ID for scroll, path for route, URL for external"
         },
         "visible": {
           "type": "boolean",
           "required": false,
-          "default": true
+          "default": true,
+          "description": "Whether the action is visible"
         },
         "roles": {
           "type": "array",
           "required": false,
-          "description": "User roles that can see this action"
+          "description": "User roles that can see this action (guest, user, admin)"
         }
       }
     }
@@ -63,6 +101,7 @@
   "behavior": {
     "displayTitle": true,
     "filterInvisibleActions": true,
-    "filterByRole": true
+    "filterByRole": true,
+    "smoothScroll": true
   }
 }

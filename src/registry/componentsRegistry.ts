@@ -11,14 +11,13 @@ import { Header } from '@/packages/shared/components/header';
 import { Footer } from '@/packages/shared/components/footer';
 
 // Import app components
-import { Login } from '@/app/components/login-component';
 import { Hero } from '@/app/components/hero';
 import { Features } from '@/app/components/features';
 import { HowItWorks } from '@/app/components/how-it-works';
 import { Testimonials } from '@/app/components/testimonials';
 import { Integrations } from '@/app/components/integrations';
 import { Newsletter } from '@/app/components/newsletter';
-import AuthForm from '@/app/components/auth';
+import AuthForm from '@/app/auth';
 
 /**
  * Registry mapping component IDs to component implementations
@@ -66,11 +65,7 @@ export const componentsRegistry: Record<string, ComponentRegistryEntry> = {
   // Auth Components
   'Auth.Component.Route': {
     component: AuthForm,
-    configPath: 'app/components/auth/auth.configuration.json',
-  },
-  'Login.Component.Route': {
-    component: Login,
-    configPath: 'app/components/login-component/login.configuration.json',
+    configPath: 'app/auth/auth.configuration.json',
   },
 };
 

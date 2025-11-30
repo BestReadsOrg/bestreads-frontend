@@ -21,5 +21,11 @@
   "behavior": {
     "animateOnScroll": true,
     "maxFeatures": 6
+  },
+  "data": {
+    "title": "Everything You Need to Master Your Reading",
+    "subtitle": "Features",
+    "description": "Track, discover, and analyze your reading journey with powerful tools designed for book lovers.",
+    "background": "gray"
   }
 }

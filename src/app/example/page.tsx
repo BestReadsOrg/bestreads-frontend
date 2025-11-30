@@ -11,37 +11,36 @@
 import React from 'react';
 import { Header } from '@/packages/shared/components/header/header.component';
 import { Footer } from '@/packages/shared/components/footer/footer.component';
-import { Login } from '@/app/components/login-component/login.component';
+import { AuthForm } from '@/app/auth';
 
 // Import DATA SOURCES (actual values, not configuration)
 import { headerData } from '@/packages/shared/components/header/header.datasource';
 import { footerData } from '@/packages/shared/components/footer/footer.datasource';
-import { defaultLoginData } from '@/app/components/login-component/login.datasource';
+import { defaultLoginData } from '@/app/auth/login.datasource';
 
 export default function ExamplePage() {
   // Example: Handler for Login actions
-  const handleLoginAction = (action: string, data?: Record<string, unknown>) => {
-    console.log('Login action triggered:', action, data);
+  const handleLoginAction = async (actionId: string, data?: Record<string, unknown>) => {
+    console.log('Login action triggered:', actionId, data);
     
-    switch (action) {
-      case 'signInEmail':
-        alert('Email sign-in clicked');
+    switch (actionId) {
+      case 'auth.login.submit':
+        alert('Login submitted: ' + JSON.stringify(data));
         break;
-      case 'signInGoogle':
-        alert('Google sign-in clicked');
-        break;
-      case 'createAccount':
-        alert('Create account clicked');
+      case 'auth.navigate.register':
+        alert('Navigate to register');
         break;
       default:
-        console.log('Unknown action:', action);
+        console.log('Unknown action:', actionId);
     }
   };
 
-  // Example user data (would come from auth context in real app)
-  const currentUser = {
-    name: 'John Doe',
-    email: 'john@example.com',
+  // Example form data state
+  const [formData, setFormData] = React.useState<Record<string, string>>({});
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
+
+  const handleFieldChange = (fieldName: string, value: string) => {
+    setFormData(prev => ({ ...prev, [fieldName]: value }));
   };
 
   return (
@@ -107,29 +106,21 @@ export default function ExamplePage() {
             </div>
           </div>
 
-          {/* Login Component Examples */}
+          {/* AuthForm Component Examples */}
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-semibold mb-4 text-gray-700">
-              Login Component (Default Data)
+              AuthForm Component (Login)
             </h3>
             <p className="text-sm text-gray-600 mb-4">
-              Data comes from <code className="bg-gray-100 px-1 rounded">login.datasource.ts</code>, 
-              structure from <code className="bg-gray-100 px-1 rounded">login.configuration.json</code>
+              Data comes from <code className="bg-gray-100 px-1 rounded">auth/login.datasource.ts</code>, 
+              structure from <code className="bg-gray-100 px-1 rounded">auth/auth.configuration.json</code>
             </p>
-            <Login {...defaultLoginData} onAction={handleLoginAction} />
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">
-              Login Component (With User Context)
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Same component, different data — demonstrates reusability
-            </p>
-            <Login 
-              {...defaultLoginData}
-              user={currentUser}
+            <AuthForm 
+              {...defaultLoginData} 
               onAction={handleLoginAction}
+              onFieldChange={handleFieldChange}
+              formData={formData}
+              errors={errors}
             />
           </div>
 
@@ -144,10 +135,15 @@ export default function ExamplePage() {
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">1. Basic Usage (Static Data)</h4>
                 <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto text-sm">
-                  <code>{`import { Login } from '@/components/login';
-import { defaultLoginData } from './login.datasource';
+                  <code>{`import { AuthForm, defaultLoginData } from '@/app/auth';
 
-<Login {...defaultLoginData} onAction={handleAction} />`}</code>
+<AuthForm 
+  {...defaultLoginData} 
+  onAction={handleAction}
+  onFieldChange={handleFieldChange}
+  formData={formData}
+  errors={errors}
+/>`}</code>
                 </pre>
               </div>
               
@@ -155,10 +151,10 @@ import { defaultLoginData } from './login.datasource';
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">2. Dynamic Data (From API)</h4>
                 <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto text-sm">
-                  <code>{`import { fetchLoginData } from './login.datasource';
+                  <code>{`import { fetchLoginData } from '@/app/auth';
 
 const loginData = await fetchLoginData(); // Fetches from API/CMS
-<Login {...loginData} onAction={handleAction} />`}</code>
+<AuthForm {...loginData} onAction={handleAction} />`}</code>
                 </pre>
               </div>
 
@@ -167,14 +163,13 @@ const loginData = await fetchLoginData(); // Fetches from API/CMS
                 <h4 className="font-medium text-gray-900 mb-2">3. Configuration Structure (JSON)</h4>
                 <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto text-sm">
                   <code>{`{
-  "componentId": "Login",
+  "componentId": "AuthForm",
   "schema": {
-    "title": { "type": "string", "required": true },
-    "description": { "type": "string", "required": false },
+    "fields": { "type": "array", "required": true },
     "actions": { "type": "array", "required": true }
   },
-  "behavior": { "filterInvisibleActions": true },
-  "styling": { "containerClass": "max-w-md mx-auto..." }
+  "behavior": { "validateOnBlur": true },
+  "styling": { "containerClass": "min-h-screen..." }
 }`}</code>
                 </pre>
               </div>
@@ -184,11 +179,14 @@ const loginData = await fetchLoginData(); // Fetches from API/CMS
                 <h4 className="font-medium text-gray-900 mb-2">4. Data Source (TypeScript)</h4>
                 <pre className="bg-gray-900 text-gray-100 p-4 rounded overflow-x-auto text-sm">
                   <code>{`export const defaultLoginData = {
-  title: "Welcome to BestReads",
-  description: "Sign in to continue",
+  id: "login-form",
+  header: { title: "Welcome Back" },
+  fields: [
+    { name: "email", type: "email", label: "Email" },
+    { name: "password", type: "password", label: "Password" }
+  ],
   actions: [
-    { label: "Sign In", action: "signIn", visible: true },
-    // ... more actions
+    { label: "Sign In", actionId: "auth.login.submit" }
   ]
 };`}</code>
                 </pre>
@@ -202,13 +200,18 @@ const loginData = await fetchLoginData(); // Fetches from API/CMS
               📁 File Organization
             </h3>
             <pre className="bg-green-100 p-4 rounded text-sm text-green-900 overflow-x-auto">
-              <code>{`components/
+              <code>{`app/
+├── auth/
+│   ├── auth.component.tsx         # React component (AuthForm)
+│   ├── auth.configuration.json    # Structure definition (schema)
+│   ├── login.datasource.ts        # Login data provider
+│   ├── register.datasource.ts     # Register data provider
+│   ├── auth.types.ts              # TypeScript types
+│   └── index.ts                   # Exports
 ├── login/
-│   ├── login.component.tsx        # React component (rendering)
-│   ├── login.configuration.json   # Structure definition (schema)
-│   ├── login.datasource.ts        # Data provider (values)
-│   ├── login.types.ts             # TypeScript types
-│   └── index.ts                   # Exports`}</code>
+│   └── page.tsx                   # Login page using AuthForm
+└── register/
+    └── page.tsx                   # Register page using AuthForm`}</code>
             </pre>
           </div>
 

@@ -20,5 +20,49 @@
   },
   "behavior": {
     "animateOnScroll": true
+  },
+  "data": {
+    "title": "Connect with Your Favorite Platforms",
+    "subtitle": "Integrations",
+    "description": "Seamlessly integrate with popular reading platforms and import your existing library.",
+    "background": "white",
+    "integrations": [
+      {
+        "id": "goodreads",
+        "name": "Goodreads",
+        "icon": "📚",
+        "description": "Import your Goodreads library seamlessly"
+      },
+      {
+        "id": "kindle",
+        "name": "Kindle",
+        "icon": "📱",
+        "description": "Sync your Kindle highlights and notes"
+      },
+      {
+        "id": "pdf",
+        "name": "PDF Files",
+        "icon": "📄",
+        "description": "Upload and track PDF documents"
+      },
+      {
+        "id": "epub",
+        "name": "EPUB Files",
+        "icon": "📖",
+        "description": "Support for EPUB format books"
+      },
+      {
+        "id": "openlibrary",
+        "name": "Open Library",
+        "icon": "🌐",
+        "description": "Access millions of book records"
+      },
+      {
+        "id": "googlebooks",
+        "name": "Google Books",
+        "icon": "🔍",
+        "description": "Search and import from Google Books"
+      }
+    ]
   }
 }

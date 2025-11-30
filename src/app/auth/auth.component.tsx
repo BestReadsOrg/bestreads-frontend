@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Input } from '@/packages/shared/components/input';
 import { Button } from '@/packages/shared/components/button';
+import { ErrorDisplay } from '@/packages/shared/components/error/error.component';
 import Link from 'next/link';
 import { AuthFormProps } from './auth.types';
 
@@ -11,7 +12,6 @@ import { AuthFormProps } from './auth.types';
  * Configuration-Driven Authentication Form Component
  * 
  * Renders login, register, or any auth form based on JSON configuration
- * No hardcoded text, labels, or fields - everything comes from config
  * 
  * @example
  * <AuthForm
@@ -73,7 +73,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const fieldContainerClass = styles?.fieldContainerClass || 'space-y-6';
   const actionsClass = styles?.actionsClass || 'space-y-4 mt-6';
 
-  // Filter visible actions
   const visibleActions = actions.filter(action => action.visible !== false);
 
   return (
@@ -99,11 +98,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
           {/* General Error Message */}
           {errors.general && (
-            <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded">
-              <div className="flex items-center">
-                <span className="text-red-500 text-xl mr-2">⚠️</span>
-                <p className="text-red-700 text-sm">{errors.general}</p>
-              </div>
+            <div className="mb-6">
+              <ErrorDisplay 
+                error={errors.general} 
+                variant="inline"
+              />
             </div>
           )}
 
