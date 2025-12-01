@@ -10,7 +10,7 @@ import { BaseComponentConfig, ConfigLoaderOptions, PageConfig, PageComponentConf
 import landingPageConfig from '@/app/landing/landing.configuration.json';
 import loginPageConfig from '@/app/login/login.configuration.json';
 import registerPageConfig from '@/app/register/register.configuration.json';
-import dashboardPageConfig from '@/app/dashboard/dashboard.configuration.json';
+import dashboardPageConfig from '@/app/[username]/dashboard/dashboard.configuration.json';
 
 import headerConfig from '@/packages/shared/components/header/header.configuration.json';
 import footerConfig from '@/packages/shared/components/footer/footer.configuration.json';

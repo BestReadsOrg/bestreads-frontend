@@ -7,55 +7,64 @@
       "label": "My Profile",
       "icon": "👤",
       "action": "navigate",
-      "path": "/profile"
+      "type": "route",
+      "target": "/profile",
+      "visible": true
     },
     {
       "id": "my-books",
       "label": "My Books",
       "icon": "📚",
       "action": "navigate",
-      "path": "/my-books"
+      "type": "route",
+      "target": "/my-books",
+      "visible": true
     },
     {
       "id": "reading-list",
       "label": "Reading List",
       "icon": "📖",
       "action": "navigate",
-      "path": "/reading-list"
+      "type": "route",
+      "target": "/reading-list",
+      "visible": true
     },
     {
       "id": "friends",
       "label": "Friends",
       "icon": "👥",
       "action": "navigate",
-      "path": "/friends"
+      "type": "route",
+      "target": "/friends",
+      "visible": true
     },
     {
       "id": "divider-1",
-      "label": "",
-      "icon": "",
-      "action": "navigate",
-      "divider": true
+      "type": "divider",
+      "visible": true
     },
     {
       "id": "settings",
       "label": "Settings",
       "icon": "⚙️",
       "action": "navigate",
-      "path": "/settings"
+      "type": "route",
+      "target": "/settings",
+      "visible": true
     },
     {
       "id": "divider-2",
-      "label": "",
-      "icon": "",
-      "action": "navigate",
-      "divider": true
+      "type": "divider",
+      "visible": true
     },
     {
       "id": "logout",
       "label": "Logout",
       "icon": "🚪",
-      "action": "logout"
+      "action": "logout",
+      "type": "action",
+      "variant": "danger",
+      "visible": true
     }
   ],
   "schema": {
@@ -66,30 +75,47 @@
       "itemSchema": {
         "id": {
           "type": "string",
-          "required": true
+          "required": true,
+          "description": "Unique identifier for the menu item"
         },
         "label": {
           "type": "string",
-          "required": true
+          "required": false,
+          "description": "Display text for the item (not required for dividers)"
         },
         "icon": {
           "type": "string",
-          "required": false
+          "required": false,
+          "description": "Emoji or icon to display"
         },
         "action": {
           "type": "string",
-          "required": true,
-          "enum": ["navigate", "logout"]
+          "required": false,
+          "enum": ["navigate", "logout"],
+          "description": "Action type to perform"
         },
-        "path": {
+        "type": {
+          "type": "string",
+          "required": true,
+          "enum": ["route", "action", "divider"],
+          "description": "Type of menu item: route (navigation), action (custom action), divider (separator)"
+        },
+        "target": {
           "type": "string",
           "required": false,
-          "description": "Required when action is navigate"
+          "description": "Navigation target path (required when type is route)"
         },
-        "divider": {
+        "variant": {
+          "type": "string",
+          "required": false,
+          "enum": ["default", "danger"],
+          "description": "Visual variant of the item"
+        },
+        "visible": {
           "type": "boolean",
           "required": false,
-          "default": false
+          "default": true,
+          "description": "Whether the item is visible"
         }
       }
     }

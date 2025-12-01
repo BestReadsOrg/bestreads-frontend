@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTheme } from '@/contexts/ThemeContext';
 import { HeaderProps, HeaderAction } from './header.types';
 import { Button } from '@/packages/shared/components/button';
 import headerConfig from './header.configuration.json';
@@ -32,6 +33,7 @@ export function Header({
   className = '',
 }: HeaderProps): React.ReactElement {
   const router = useRouter();
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // Filter actions based on visibility
@@ -70,13 +72,13 @@ export function Header({
   };
 
   return (
-    <header className={`bg-white shadow-sm border-b ${className}`}>
+    <header className={`bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 ${className}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex justify-between items-center">
           {/* Title */}
           {headerConfig.behavior.displayTitle && (
             <h1 
-              className="text-xl font-bold text-gray-900 cursor-pointer" 
+              className="text-xl font-bold text-gray-900 dark:text-white cursor-pointer" 
               onClick={() => handleAction({ label: 'Home', action: 'navigateHome', type: 'scroll', target: 'top', visible: true })}
             >
               {title}
@@ -86,7 +88,7 @@ export function Header({
           {/* Desktop Actions */}
           {visibleActions.length > 0 && (
             <>
-              <nav className="hidden md:flex space-x-2">
+              <nav className="hidden md:flex space-x-2 items-center">
                 {visibleActions.map((action, index) => (
                   <Button
                     key={`${action.action}-${index}`}
@@ -97,11 +99,21 @@ export function Header({
                     onClick={() => handleAction(action)}
                   />
                 ))}
+                
+                {/* Dark Mode Toggle */}
+                <button
+                  onClick={toggleDarkMode}
+                  className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  aria-label="Toggle dark mode"
+                  type="button"
+                >
+                  {isDarkMode ? '🌞' : '🌙'}
+                </button>
               </nav>
 
               {/* Mobile Menu Button */}
               <button
-                className="md:hidden p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 aria-label="Toggle menu"
                 type="button"
@@ -147,6 +159,16 @@ export function Header({
                 onClick={() => handleAction(action)}
               />
             ))}
+            
+            {/* Dark Mode Toggle in Mobile Menu */}
+            <button
+              onClick={toggleDarkMode}
+              className="w-full flex items-center justify-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+              type="button"
+            >
+              <span>{isDarkMode ? '🌞' : '🌙'}</span>
+              <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+            </button>
           </nav>
         )}
       </div>

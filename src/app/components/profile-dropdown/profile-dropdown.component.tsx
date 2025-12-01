@@ -36,8 +36,8 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
   };
 
   const handleMenuItemClick = (item: DropdownMenuItem) => {
-    if (item.action === 'navigate' && item.path) {
-      onNavigate(item.path);
+    if (item.type === 'route' && item.target) {
+      onNavigate(item.target);
     } else if (item.action === 'logout') {
       onLogout();
     }
@@ -101,7 +101,8 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
           {/* Menu Items */}
           <div className="py-1">
             {menuItems.map((item) => {
-              if (item.divider) {
+              // Handle divider type
+              if (item.type === 'divider' || item.divider) {
                 return <MenuDivider key={item.id} />;
               }
 
@@ -109,9 +110,9 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
                 <MenuItem
                   key={item.id}
                   icon={item.icon}
-                  label={item.label}
+                  label={item.label || ''}
                   onClick={() => handleMenuItemClick(item)}
-                  variant={item.action === 'logout' ? 'danger' : 'default'}
+                  variant={item.variant || (item.action === 'logout' ? 'danger' : 'default')}
                 />
               );
             })}

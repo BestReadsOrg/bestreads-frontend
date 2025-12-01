@@ -34,6 +34,7 @@ export interface User {
   roles: string[];
   emailVerified: boolean;
   active: boolean;
+  darkMode?: boolean;
   createdAt: string;
   updatedAt: string;
 }

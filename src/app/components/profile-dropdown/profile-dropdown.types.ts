@@ -11,9 +11,14 @@ export interface ProfileDropdownProps {
 
 export interface DropdownMenuItem {
   id: string;
-  label: string;
-  icon: string;
-  action: 'navigate' | 'logout';
+  label?: string;
+  icon?: string;
+  action?: 'navigate' | 'logout';
+  type: 'route' | 'action' | 'divider';
+  target?: string;
+  variant?: 'default' | 'danger';
+  visible?: boolean;
+  // Legacy support
   path?: string;
   divider?: boolean;
 }

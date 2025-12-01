@@ -1,0 +1,117 @@
+{
+  "id": "DashboardPage.Component.Route",
+  "configId": "DashboardPage.Configuration.json",
+  "title": "Dashboard - BestReads",
+  "description": "User dashboard for BestReads platform",
+  "welcome": {
+    "titleTemplate": "Welcome back, {username}! 📚",
+    "titleNew": "Welcome, {username}! 📚",
+    "subtitle": "Here's your reading dashboard and progress",
+    "subtitleNew": "Start your reading journey today"
+  },
+  "stats": [
+    {
+      "id": "total-books",
+      "label": "Total Books",
+      "icon": "📚",
+      "dataKey": "totalBooks",
+      "color": "blue"
+    },
+    {
+      "id": "currently-reading",
+      "label": "Currently Reading",
+      "icon": "📖",
+      "dataKey": "currentlyReading",
+      "color": "green"
+    },
+    {
+      "id": "completed",
+      "label": "Books Completed",
+      "icon": "✅",
+      "dataKey": "completed",
+      "color": "purple"
+    }
+  ],
+  "booksSection": {
+    "title": "Your Books",
+    "emptyState": {
+      "icon": "📚",
+      "title": "No books yet",
+      "description": "Start building your reading library by adding your first book!",
+      "actionLabel": "Search for Books",
+      "actionIcon": "🔍"
+    }
+  },
+  "quickActions": [
+    {
+      "id": "analytics",
+      "title": "📊 Reading Analytics",
+      "description": "Track your reading habits and progress over time",
+      "buttonLabel": "View Analytics",
+      "gradient": "from-blue-50 to-blue-100",
+      "action": "view-analytics"
+    },
+    {
+      "id": "goals",
+      "title": "🎯 Set Reading Goals",
+      "description": "Challenge yourself with personalized reading goals",
+      "buttonLabel": "Create Goal",
+      "gradient": "from-purple-50 to-purple-100",
+      "action": "create-goal"
+    }
+  ],
+  "components": [
+    {
+      "id": "header",
+      "configId": "header.route",
+      "order": 1,
+      "visible": true,
+      "props": {}
+    },
+    {
+      "id": "dashboard-content",
+      "configId": "dashboard-content.route",
+      "order": 2,
+      "visible": true,
+      "props": {}
+    },
+    {
+      "id": "footer",
+      "configId": "footer.route",
+      "order": 3,
+      "visible": true,
+      "props": {}
+    }
+  ],
+  "meta": {
+    "seo": {
+      "title": "Dashboard - BestReads",
+      "description": "Your personal reading dashboard",
+      "keywords": ["dashboard", "my books", "reading list"]
+    },
+    "requiresAuth": true,
+    "redirectIfNotAuthenticated": "/login"
+  },
+  "schema": {
+    "welcome": {
+      "type": "object",
+      "required": true,
+      "description": "Welcome section configuration"
+    },
+    "stats": {
+      "type": "array",
+      "required": true,
+      "description": "Statistics cards to display"
+    },
+    "booksSection": {
+      "type": "object",
+      "required": true,
+      "description": "Books section configuration"
+    },
+    "quickActions": {
+      "type": "array",
+      "required": true,
+      "description": "Quick action cards"
+    }
+  }
+}

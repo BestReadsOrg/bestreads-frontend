@@ -11,6 +11,7 @@ export interface UserResponse {
   roles: string[];
   emailVerified: boolean;
   active: boolean;
+  darkMode?: boolean;
   createdAt: string;
   updatedAt: string;
 }
