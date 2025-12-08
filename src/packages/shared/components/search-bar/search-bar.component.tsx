@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { SearchBarProps } from './search-bar.types';
 import searchService, { ExternalBook } from '@/services/searchService';
 
@@ -24,6 +25,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   showDropdown = true,
   onViewAllResults,
 }) => {
+  const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'title' | 'isbn'>('title');
@@ -127,9 +129,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   const handleBookClick = (book: ExternalBook) => {
-    setSearchQuery(book.title);
     setShowResults(false);
-    onSearch(book.title, 'title');
+    setIsExpanded(false);
+    // Navigate to book details page using the book ID
+    router.push(`/search/${book.id}`);
   };
 
   const handleViewAll = () => {

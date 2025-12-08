@@ -140,8 +140,11 @@ function SearchPageContent() {
                   key={book.id}
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
                 >
-                  {/* Book Cover */}
-                  <div className="relative h-64 bg-linear-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900">
+                  {/* Book Cover - Clickable */}
+                  <button
+                    onClick={() => router.push(`/search/${book.id}`)}
+                    className="w-full relative h-64 bg-linear-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 hover:opacity-90 transition-opacity"
+                  >
                     {book.coverImage ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -154,16 +157,21 @@ function SearchPageContent() {
                         <span className="text-6xl">📚</span>
                       </div>
                     )}
-                  </div>
+                  </button>
 
                   {/* Book Details */}
                   <div className="p-4">
-                    <h3 className="font-bold text-lg text-gray-900 dark:text-white line-clamp-2 mb-1">
-                      {book.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                      by {book.author}
-                    </p>
+                    <button
+                      onClick={() => router.push(`/search/${book.id}`)}
+                      className="w-full text-left mb-3 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                    >
+                      <h3 className="font-bold text-lg text-gray-900 dark:text-white line-clamp-2 mb-1">
+                        {book.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        by {book.author}
+                      </p>
+                    </button>
                     
                     {book.publishedYear && (
                       <p className="text-xs text-gray-500 dark:text-gray-500 mb-3">
