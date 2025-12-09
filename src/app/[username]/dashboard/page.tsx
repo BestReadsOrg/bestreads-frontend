@@ -9,13 +9,16 @@ import { ErrorDisplay } from '@/packages/shared/components/error/error.component
 import { StatCard } from '@/packages/shared/components/stat-card';
 import { BookCard } from '@/packages/shared/components/book-card';
 import { HeaderV2 } from '@/packages/shared/components/headerv2';
+import { Notification } from '@/packages/shared/components/notification';
 import useAuth from '@/hooks/useAuth';
+import { useNotification } from '@/hooks/useNotification';
 import bookService, { Book } from '@/services/bookService';
 import dashboardConfig from './dashboard.configuration.json';
 
 export default function DashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const { notification, showInfo, hideNotification } = useNotification();
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -188,10 +191,11 @@ export default function DashboardPage() {
                 variant="primary"
                 size="md"
                 onClick={() =>
-                  alert(
+                  showInfo(
                     action.action === 'view-analytics'
                       ? 'Analytics feature coming soon!'
-                      : 'Goals feature coming soon!'
+                      : 'Goals feature coming soon!',
+                    'Coming Soon'
                   )
                 }
               />
@@ -199,6 +203,15 @@ export default function DashboardPage() {
           ))}
         </div>
       </Container>
+      
+      <Notification
+        isOpen={notification.isOpen}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+        onClose={hideNotification}
+        duration={notification.duration}
+      />
     </div>
   );
 }

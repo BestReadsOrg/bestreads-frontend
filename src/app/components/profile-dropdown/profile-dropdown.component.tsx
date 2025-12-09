@@ -49,7 +49,7 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
       {/* Profile Button */}
       <button
         onClick={handleToggle}
-        className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
         aria-label="Profile menu"
         aria-expanded={isOpen}
       >
@@ -69,7 +69,7 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
         
         {/* Dropdown indicator */}
         <svg
-          className={`w-4 h-4 text-gray-600 transition-transform ${
+          className={`w-4 h-4 text-gray-600 dark:text-gray-300 transition-transform ${
             isOpen ? 'rotate-180' : ''
           }`}
           fill="none"
@@ -87,14 +87,14 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+        <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50">
           {/* User Info */}
-          <div className="px-4 py-3 border-b border-gray-200">
-            <p className="text-sm font-semibold text-gray-900 truncate">
+          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
               {user.username}
             </p>
             {user.email && (
-              <p className="text-xs text-gray-500 truncate">{user.email}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
             )}
           </div>
 

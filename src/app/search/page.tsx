@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { HeaderV2 } from '@/packages/shared/components/headerv2';
 import { Container } from '@/packages/shared/components/layout';
 import { LoadingSkeleton } from '@/packages/shared/components/loading/loading.component';
+import { Notification } from '@/packages/shared/components/notification';
 import useAuth from '@/hooks/useAuth';
+import { useNotification } from '@/hooks/useNotification';
 import searchService, { ExternalBook, PaginatedSearchResult } from '@/services/searchService';
 import userBookService, { ReadingStatus } from '@/services/userBookService';
 
@@ -13,14 +15,29 @@ function SearchPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isAuthenticated } = useAuth();
+  const { notification, showSuccess, showError, hideNotification } = useNotification();
   
   const [searchResult, setSearchResult] = useState<PaginatedSearchResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const query = searchParams.get('q') || '';
   const type = (searchParams.get('type') as 'title' | 'isbn') || 'title';
   const pageParam = searchParams.get('page');
   const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (!query) {
@@ -50,7 +67,7 @@ function SearchPageContent() {
     performSearch();
   }, [query, type, currentPage]);
 
-  const handleAddToCollection = async (book: ExternalBook) => {
+  const handleAddToCollection = async (book: ExternalBook, status: ReadingStatus) => {
     if (!isAuthenticated) {
       router.push('/login');
       return;
@@ -63,15 +80,28 @@ function SearchPageContent() {
         author: book.author,
         isbn: book.isbn,
         coverImage: book.coverImage,
-        status: ReadingStatus.WANT_TO_READ,
+        status,
         totalPages: book.pages,
         favorite: false,
       });
 
-      alert(`"${book.title}" added to your collection!`);
+      setOpenDropdown(null);
+      
+      const statusLabels = {
+        [ReadingStatus.WANT_TO_READ]: 'Want to Read',
+        [ReadingStatus.CURRENTLY_READING]: 'Currently Reading',
+        [ReadingStatus.COMPLETED]: 'Completed',
+        [ReadingStatus.DID_NOT_FINISH]: 'Did Not Finish',
+      };
+
+      showSuccess(`"${book.title}" added to ${statusLabels[status]}!`, 'Book Added');
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to add book');
+      showError(err instanceof Error ? err.message : 'Failed to add book', 'Error');
     }
+  };
+
+  const toggleDropdown = (bookId: string) => {
+    setOpenDropdown(openDropdown === bookId ? null : bookId);
   };
 
   const handlePageChange = (newPage: number) => {
@@ -138,12 +168,12 @@ function SearchPageContent() {
               {searchResult.books.map((book) => (
                 <div
                   key={book.id}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow flex flex-col"
                 >
                   {/* Book Cover - Clickable */}
                   <button
                     onClick={() => router.push(`/search/${book.id}`)}
-                    className="w-full relative h-64 bg-linear-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 hover:opacity-90 transition-opacity"
+                    className="w-full relative h-64 bg-linear-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 hover:opacity-90 transition-opacity shrink-0"
                   >
                     {book.coverImage ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -160,7 +190,7 @@ function SearchPageContent() {
                   </button>
 
                   {/* Book Details */}
-                  <div className="p-4">
+                  <div className="p-4 flex flex-col grow">
                     <button
                       onClick={() => router.push(`/search/${book.id}`)}
                       className="w-full text-left mb-3 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
@@ -173,38 +203,85 @@ function SearchPageContent() {
                       </p>
                     </button>
                     
-                    {book.publishedYear && (
-                      <p className="text-xs text-gray-500 dark:text-gray-500 mb-3">
-                        Published: {book.publishedYear}
-                      </p>
-                    )}
+                    <div className="grow">
+                      {book.publishedYear && (
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mb-2">
+                          Published: {book.publishedYear}
+                        </p>
+                      )}
 
-                    {book.rating && (
-                      <div className="flex items-center mb-3">
-                        <span className="text-yellow-500">⭐</span>
-                        <span className="text-sm text-gray-700 dark:text-gray-300 ml-1">
-                          {book.rating.toFixed(1)}
-                        </span>
-                        {book.ratingCount && (
-                          <span className="text-xs text-gray-500 dark:text-gray-500 ml-1">
-                            ({book.ratingCount.toLocaleString()})
+                      {book.rating && (
+                        <div className="flex items-center mb-2">
+                          <span className="text-yellow-500">⭐</span>
+                          <span className="text-sm text-gray-700 dark:text-gray-300 ml-1">
+                            {book.rating.toFixed(1)}
                           </span>
-                        )}
-                      </div>
-                    )}
+                          {book.ratingCount && (
+                            <span className="text-xs text-gray-500 dark:text-gray-500 ml-1">
+                              ({book.ratingCount.toLocaleString()})
+                            </span>
+                          )}
+                        </div>
+                      )}
 
-                    {book.editionCount && book.editionCount > 1 && (
-                      <p className="text-xs text-gray-500 dark:text-gray-500 mb-3">
-                        {book.editionCount} editions
-                      </p>
-                    )}
+                      {book.editionCount && book.editionCount > 1 && (
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mb-2">
+                          {book.editionCount} editions
+                        </p>
+                      )}
+                    </div>
 
-                    <button
-                      onClick={() => handleAddToCollection(book)}
-                      className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                    >
-                      Add to Collection
-                    </button>
+                    {/* Add to Collection Dropdown */}
+                    <div className="relative mt-3" ref={openDropdown === book.id ? dropdownRef : null}>
+                      <button
+                        onClick={() => toggleDropdown(book.id)}
+                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2"
+                      >
+                        <span>Add to Collection</span>
+                        <svg
+                          className={`w-4 h-4 transition-transform ${openDropdown === book.id ? 'rotate-180' : ''}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+
+                      {/* Dropdown Menu */}
+                      {openDropdown === book.id && (
+                        <div className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-gray-700 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600 z-10 overflow-hidden">
+                          <button
+                            onClick={() => handleAddToCollection(book, ReadingStatus.WANT_TO_READ)}
+                            className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors flex items-center gap-2 text-gray-900 dark:text-white"
+                          >
+                            <span className="text-lg">📖</span>
+                            <span className="font-medium">Want to Read</span>
+                          </button>
+                          <button
+                            onClick={() => handleAddToCollection(book, ReadingStatus.CURRENTLY_READING)}
+                            className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors flex items-center gap-2 text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-600"
+                          >
+                            <span className="text-lg">📚</span>
+                            <span className="font-medium">Currently Reading</span>
+                          </button>
+                          <button
+                            onClick={() => handleAddToCollection(book, ReadingStatus.COMPLETED)}
+                            className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors flex items-center gap-2 text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-600"
+                          >
+                            <span className="text-lg">✅</span>
+                            <span className="font-medium">Completed</span>
+                          </button>
+                          <button
+                            onClick={() => handleAddToCollection(book, ReadingStatus.DID_NOT_FINISH)}
+                            className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors flex items-center gap-2 text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-600"
+                          >
+                            <span className="text-lg">❌</span>
+                            <span className="font-medium">Did Not Finish</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -279,6 +356,15 @@ function SearchPageContent() {
           </div>
         )}
       </Container>
+      
+      <Notification
+        isOpen={notification.isOpen}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+        onClose={hideNotification}
+        duration={notification.duration}
+      />
     </div>
   );
 }

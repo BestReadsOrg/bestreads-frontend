@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { ReviewModalProps } from './review-modal.types';
 import { RichTextEditor } from '../rich-text-editor';
 import { FormattingHelpModal } from '../formatting-help-modal';
+import { Notification } from '../notification';
+import { useNotification } from '@/hooks/useNotification';
 
 export const ReviewModal: React.FC<ReviewModalProps> = ({
   isOpen,
@@ -15,6 +17,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
   isEditMode = false,
   bookTitle,
 }) => {
+  const { notification, showError, showWarning, hideNotification } = useNotification();
   const [rating, setRating] = useState(initialRating);
   const [reviewText, setReviewText] = useState(initialReviewText);
   const [reviewHtml, setReviewHtml] = useState(initialReviewHtml);
@@ -32,12 +35,12 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
     e.preventDefault();
     
     if (rating === 0) {
-      alert('Please select a rating');
+      showWarning('Please select a rating', 'Rating Required');
       return;
     }
 
     if (reviewText.trim().length < 10) {
-      alert('Review must be at least 10 characters long');
+      showWarning('Review must be at least 10 characters long', 'Review Too Short');
       return;
     }
 
@@ -47,7 +50,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
       onClose();
     } catch (error) {
       console.error('Error submitting review:', error);
-      alert('Failed to submit review. Please try again.');
+      showError('Failed to submit review. Please try again.', 'Submission Failed');
     } finally {
       setIsSubmitting(false);
     }
@@ -205,6 +208,15 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({
       <FormattingHelpModal
         isOpen={showFormattingHelp}
         onClose={() => setShowFormattingHelp(false)}
+      />
+      
+      <Notification
+        isOpen={notification.isOpen}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+        onClose={hideNotification}
+        duration={notification.duration}
       />
     </div>
   );

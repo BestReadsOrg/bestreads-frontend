@@ -5,12 +5,15 @@ import { useRouter } from 'next/navigation';
 import { HeaderV2 } from '@/packages/shared/components/headerv2';
 import { Container } from '@/packages/shared/components/layout';
 import { LoadingSkeleton } from '@/packages/shared/components/loading/loading.component';
+import { Notification } from '@/packages/shared/components/notification';
 import useAuth from '@/hooks/useAuth';
+import { useNotification } from '@/hooks/useNotification';
 import userBookService, { UserBook, ReadingStatus } from '@/services/userBookService';
 
 export default function MyBooksPage() {
   const router = useRouter();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const { notification, showError, hideNotification } = useNotification();
   
   const [books, setBooks] = useState<UserBook[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,7 +54,7 @@ export default function MyBooksPage() {
       await userBookService.removeBookFromCollection(bookId);
       setBooks(books.filter(b => b.id !== bookId));
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to remove book');
+      showError(err instanceof Error ? err.message : 'Failed to remove book', 'Error');
     }
   };
 
@@ -212,6 +215,15 @@ export default function MyBooksPage() {
           </div>
         )}
       </Container>
+      
+      <Notification
+        isOpen={notification.isOpen}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+        onClose={hideNotification}
+        duration={notification.duration}
+      />
     </div>
   );
 }

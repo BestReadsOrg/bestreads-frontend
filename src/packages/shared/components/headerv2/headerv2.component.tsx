@@ -28,12 +28,12 @@ export function HeaderV2({
   const username = userData?.username || 'user';
 
   const handleSearch = (query: string, searchType: 'title' | 'isbn') => {
-    // Navigate to search results page with query params
+    // Navigate to global search results page with query params
     const params = new URLSearchParams({
       q: query,
       type: searchType,
     });
-    router.push(`/${username}/search?${params.toString()}`);
+    router.push(`/search?${params.toString()}`);
   };
 
   const handleProfileNavigate = (path: string) => {

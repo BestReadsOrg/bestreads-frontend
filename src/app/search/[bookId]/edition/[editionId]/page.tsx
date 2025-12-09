@@ -413,7 +413,7 @@ export default function EditionDetailsPage() {
           favorite: false,
         });
         setCurrentBookStatus(status);
-        alert(`Status updated to ${getStatusLabel(status)}!`);
+        showSuccess(`Status updated to ${getStatusLabel(status)}!`, 'Book Updated');
       } else {
         // Add new book
         const newBook = await userBookService.addBookToCollection({
@@ -555,7 +555,7 @@ export default function EditionDetailsPage() {
       const editionKey = filteredEditions[0].key.replace('/books/', '');
       router.push(`/search/${bookId}/edition/${editionKey}`);
     } else if (filteredEditions.length === 0) {
-      alert('No edition found with this ISBN for this book.');
+      showWarning('No edition found with this ISBN for this book.', 'Not Found');
     }
     // If multiple matches, user can see them in the filtered list below
   };

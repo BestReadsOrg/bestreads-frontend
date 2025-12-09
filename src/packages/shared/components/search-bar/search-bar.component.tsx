@@ -111,7 +111,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     e.preventDefault();
     if (searchQuery.trim()) {
       setShowResults(false);
-      onSearch(searchQuery.trim(), searchType);
+      setIsExpanded(false);
+      // Navigate to search results page
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}&type=${searchType}`);
+      // Also call the onSearch callback if provided
+      if (onSearch) {
+        onSearch(searchQuery.trim(), searchType);
+      }
     }
   };
 
@@ -137,9 +143,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   const handleViewAll = () => {
     setShowResults(false);
+    setIsExpanded(false);
+    // Navigate to search results page
+    router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}&type=${searchType}`);
+    // Also call the callback if provided
     if (onViewAllResults) {
       onViewAllResults();
-    } else {
+    } else if (onSearch) {
       onSearch(searchQuery.trim(), searchType);
     }
   };

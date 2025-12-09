@@ -34,8 +34,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({
   className = '',
 }) => {
   const variantClasses = {
-    default: 'text-gray-700 hover:bg-gray-100',
-    danger: 'text-red-600 hover:bg-red-50',
+    default: 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700',
+    danger: 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20',
   };
 
   return (
@@ -60,7 +60,7 @@ export interface MenuDividerProps {
  * <MenuDivider />
  */
 export const MenuDivider: React.FC<MenuDividerProps> = ({ className = '' }) => {
-  return <div className={`my-1 border-t border-gray-200 ${className}`} />;
+  return <div className={`my-1 border-t border-gray-200 dark:border-gray-700 ${className}`} />;
 };
 
 export default MenuItem;
