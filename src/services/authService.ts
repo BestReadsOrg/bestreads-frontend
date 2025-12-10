@@ -15,6 +15,7 @@ export interface RegisterRequest {
 }
 
 export interface AuthResponse {
+  id: string;
   token: string;
   refreshToken: string;
   type: string;
@@ -142,6 +143,7 @@ class AuthService {
     
     // Store user info
     const user: Partial<User> = {
+      id: data.id,
       username: data.username,
       email: data.email,
       roles: data.roles,

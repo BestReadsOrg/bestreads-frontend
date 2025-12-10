@@ -52,7 +52,8 @@ export default function MyBooksPage() {
 
     try {
       await userBookService.removeBookFromCollection(bookId);
-      setBooks(books.filter(b => b.id !== bookId));
+      // Refetch from database instead of updating local state
+      await fetchBooks();
     } catch (err) {
       showError(err instanceof Error ? err.message : 'Failed to remove book', 'Error');
     }

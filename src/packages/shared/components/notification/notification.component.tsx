@@ -57,20 +57,20 @@ export const Notification: React.FC<NotificationProps> = ({
   const getBackgroundColor = () => {
     switch (type) {
       case 'success':
-        return 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800';
+        return 'bg-green-50 dark:bg-green-950/50 border-green-300 dark:border-green-700 shadow-green-100 dark:shadow-green-900/50';
       case 'error':
-        return 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800';
+        return 'bg-red-50 dark:bg-red-950/50 border-red-300 dark:border-red-700 shadow-red-100 dark:shadow-red-900/50';
       case 'warning':
-        return 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800';
+        return 'bg-yellow-50 dark:bg-yellow-950/50 border-yellow-300 dark:border-yellow-700 shadow-yellow-100 dark:shadow-yellow-900/50';
       case 'info':
       default:
-        return 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800';
+        return 'bg-blue-50 dark:bg-blue-950/50 border-blue-300 dark:border-blue-700 shadow-blue-100 dark:shadow-blue-900/50';
     }
   };
 
   return (
-    <div className="fixed top-4 right-4 z-50 animate-slide-in-right">
-      <div className={`max-w-md rounded-lg border shadow-lg p-4 ${getBackgroundColor()}`}>
+    <div className="fixed top-4 right-4 z-50 animate-slide-in-right max-w-md">
+      <div className={`rounded-lg border-2 shadow-2xl p-4 backdrop-blur-sm ${getBackgroundColor()}`}>
         <div className="flex items-start gap-3">
           {/* Icon */}
           <div className="shrink-0 mt-0.5">
@@ -126,9 +126,14 @@ export const Notification: React.FC<NotificationProps> = ({
 
         {/* Progress bar for auto-close */}
         {duration > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-700 rounded-b-lg overflow-hidden">
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200/50 dark:bg-gray-700/50 rounded-b-lg overflow-hidden">
             <div
-              className="h-full bg-gray-400 dark:bg-gray-500 animate-progress"
+              className={`h-full animate-progress ${
+                type === 'success' ? 'bg-green-500 dark:bg-green-400' :
+                type === 'error' ? 'bg-red-500 dark:bg-red-400' :
+                type === 'warning' ? 'bg-yellow-500 dark:bg-yellow-400' :
+                'bg-blue-500 dark:bg-blue-400'
+              }`}
               style={{
                 animation: `progress ${duration}ms linear forwards`,
               }}

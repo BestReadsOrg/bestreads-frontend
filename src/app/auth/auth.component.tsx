@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Input } from '@/packages/shared/components/input';
 import { Button } from '@/packages/shared/components/button';
-import { ErrorDisplay } from '@/packages/shared/components/error/error.component';
 import Link from 'next/link';
 import { AuthFormProps } from './auth.types';
 
@@ -95,16 +94,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               </p>
             )}
           </div>
-
-          {/* General Error Message */}
-          {errors.general && (
-            <div className="mb-6">
-              <ErrorDisplay 
-                error={errors.general} 
-                variant="inline"
-              />
-            </div>
-          )}
 
           {/* Form Fields */}
           <form onSubmit={handleSubmit} id={id}>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { NotificationType } from '@/packages/shared/components/notification';
+import { NotificationType, NotificationAction } from '@/packages/shared/components/notification';
 
 export interface NotificationState {
   isOpen: boolean;
@@ -9,6 +9,7 @@ export interface NotificationState {
   message: string;
   type: NotificationType;
   duration?: number;
+  actions?: NotificationAction[];
 }
 
 export const useNotification = () => {
@@ -22,7 +23,8 @@ export const useNotification = () => {
     message: string,
     type: NotificationType = 'info',
     title?: string,
-    duration: number = 5000
+    duration: number = 5000,
+    actions?: NotificationAction[]
   ) => {
     setNotification({
       isOpen: true,
@@ -30,11 +32,17 @@ export const useNotification = () => {
       type,
       title,
       duration,
+      actions,
     });
   }, []);
 
-  const showSuccess = useCallback((message: string, title?: string) => {
-    showNotification(message, 'success', title);
+  const showSuccess = useCallback((
+    message: string,
+    title?: string,
+    duration: number = 5000,
+    actions?: NotificationAction[]
+  ) => {
+    showNotification(message, 'success', title, duration, actions);
   }, [showNotification]);
 
   const showError = useCallback((message: string, title?: string) => {

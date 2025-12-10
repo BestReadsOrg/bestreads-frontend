@@ -3,11 +3,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useAuth from '@/hooks/useAuth';
+import { useNotification } from '@/hooks/useNotification';
+import { Notification } from '@/packages/shared/components/notification';
 import { AuthForm, defaultLoginData } from '@/app/auth';
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
+  const { notification, showError, hideNotification } = useNotification();
   
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -62,34 +65,6 @@ export default function LoginPage() {
   };
 
   const handleLoginSubmit = async (data: Record<string, string>) => {
-    // 🚨 BYPASS MODE - Comment out the line below to enable normal authentication
-    const BYPASS_AUTH = true; // Set to false to use real authentication
-    
-    if (BYPASS_AUTH) {
-      // Bypass authentication - directly navigate to dashboard
-      console.log('⚠️ AUTH BYPASS ACTIVE - Using dummy credentials');
-      setIsLoading(true);
-      
-      // Simulate a quick login delay
-      setTimeout(() => {
-        // Store dummy user data in localStorage to simulate logged-in state
-        localStorage.setItem('auth_token', 'dummy-token-for-testing');
-        localStorage.setItem('user', JSON.stringify({
-          id: 'test-user-123',
-          username: 'testuser',
-          email: 'test@example.com',
-          firstName: 'Test',
-          lastName: 'User'
-        }));
-        
-        setIsLoading(false);
-        router.push(`testuser/dashboard`);
-      }, 500);
-      
-      return;
-    }
-    
-    // Normal authentication flow
     if (!validateForm(data)) {
       return;
     }
@@ -99,24 +74,39 @@ export default function LoginPage() {
 
     try {
       await login(data.usernameOrEmail, data.password);
-      router.push('/dashboard');
+      // Navigate to user's dashboard after successful login
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      if (currentUser.username) {
+        router.push(`/${currentUser.username}/dashboard`);
+      } else {
+        router.push('/');
+      }
     } catch (error) {
-      setErrors({
-        general: error instanceof Error ? error.message : 'Login failed. Please check your credentials.'
-      });
+      const errorMessage = error instanceof Error ? error.message : 'Login failed. Please check your credentials.';
+      showError(errorMessage, 'Login Failed');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <AuthForm
-      {...defaultLoginData}
-      onAction={handleAction}
-      onFieldChange={handleFieldChange}
-      formData={formData}
-      errors={errors}
-      loading={isLoading}
-    />
+    <>
+      <Notification
+        isOpen={notification.isOpen}
+        type={notification.type}
+        title={notification.title}
+        message={notification.message}
+        onClose={hideNotification}
+        duration={notification.duration}
+      />
+      <AuthForm
+        {...defaultLoginData}
+        onAction={handleAction}
+        onFieldChange={handleFieldChange}
+        formData={formData}
+        errors={errors}
+        loading={isLoading}
+      />
+    </>
   );
 }

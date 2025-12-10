@@ -53,8 +53,8 @@ export function HeaderV2({
     router.push('/landing');
   };
 
-  const handleMyBooks = () => {
-    router.push(`/${username}/my-books`);
+  const handleMyLists = () => {
+    router.push(`/${username}/lists`);
     setIsMobileMenuOpen(false);
   };
   
@@ -78,13 +78,13 @@ export function HeaderV2({
 
           {/* Desktop - Center Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            {/* My Books Button */}
+            {/* My Lists Button */}
             <button
-              onClick={handleMyBooks}
+              onClick={handleMyLists}
               className="flex items-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors font-medium"
             >
-              <span className="text-lg">📚</span>
-              <span>My Books</span>
+              <span className="text-lg">📋</span>
+              <span>My Lists</span>
             </button>
 
             {/* Search Bar */}
@@ -165,11 +165,11 @@ export function HeaderV2({
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4 space-y-3">
             <button
-              onClick={handleMyBooks}
+              onClick={handleMyLists}
               className="w-full flex items-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
-              <span className="text-lg">📚</span>
-              <span>My Books</span>
+              <span className="text-lg">📋</span>
+              <span>My Lists</span>
             </button>
             
             <div className="px-2">

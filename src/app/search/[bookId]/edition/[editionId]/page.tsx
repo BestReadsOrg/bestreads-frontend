@@ -15,7 +15,7 @@ import useAuth from '@/hooks/useAuth';
 import { useNotification } from '@/hooks/useNotification';
 import searchService, { BookDetails, EditionDetails, OpenLibraryEdition } from '@/services/searchService';
 import userBookService, { ReadingStatus } from '@/services/userBookService';
-import reviewService, { Review } from '@/services/reviewService';
+import reviewService, { Review, PagedReviewResponse } from '@/services/reviewService';
 
 export default function EditionDetailsPage() {
   const params = useParams();
@@ -47,6 +47,14 @@ export default function EditionDetailsPage() {
   const [selectedRatingFilter, setSelectedRatingFilter] = useState<number | null>(null);
   const [reviewSortOption, setReviewSortOption] = useState<ReviewSortOption>('most-popular');
   const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; onConfirm: () => void }>({ isOpen: false, onConfirm: () => {} });
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [pageSize] = useState(10);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const [hasPreviousPage, setHasPreviousPage] = useState(false);
 
   useEffect(() => {
     if (!bookId || !editionId) return;
@@ -90,128 +98,26 @@ export default function EditionDetailsPage() {
     fetchData();
   }, [bookId, editionId, isAuthenticated]);
 
-  // Fetch reviews
+  // Fetch reviews with pagination
   useEffect(() => {
     if (!bookId || !editionId) return;
 
     const fetchReviews = async () => {
       setLoadingReviews(true);
       try {
-        const allReviews = await reviewService.getReviewsForBook(bookId, editionId);
+        // Fetch paginated reviews from MongoDB
+        const pagedResponse: PagedReviewResponse = await reviewService.getReviewsForBookPaginated(
+          bookId, 
+          editionId, 
+          currentPage, 
+          pageSize
+        );
         
-        // Use dummy data for testing if no reviews exist
-        if (allReviews.length === 0) {
-          const dummyReviews: Review[] = [
-            {
-              id: 'dummy-1',
-              userId: 'user-1',
-              userName: 'Sarah Johnson',
-              userAvatar: undefined,
-              bookId,
-              editionId,
-              userBookId: 'ub-1',
-              rating: 5,
-              reviewText: 'This book completely changed my perspective on the subject. The author\'s writing style is engaging and accessible, making complex topics easy to understand. I found myself highlighting passages and taking notes throughout. The real-world examples provided were particularly helpful in connecting theory to practice. Highly recommended for anyone interested in this field, whether you\'re a beginner or have some prior knowledge.',
-              createdAt: '2024-03-15T10:30:00Z',
-              updatedAt: '2024-03-15T10:30:00Z',
-              helpfulCount: 42,
-              isHelpfulByCurrentUser: false,
-            },
-            {
-              id: 'dummy-2',
-              userId: 'user-2',
-              userName: 'Michael Chen',
-              userAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael',
-              bookId,
-              editionId,
-              userBookId: 'ub-2',
-              rating: 4,
-              reviewText: 'A solid read with great insights. The first half was absolutely brilliant, packed with innovative ideas and well-researched content. However, I felt the latter chapters could have been more concise. Some sections felt repetitive, covering similar ground multiple times. That said, the core message is valuable and worth your time.',
-              createdAt: '2024-03-10T14:20:00Z',
-              updatedAt: '2024-03-10T14:20:00Z',
-              helpfulCount: 28,
-              isHelpfulByCurrentUser: false,
-            },
-            {
-              id: 'dummy-3',
-              userId: 'user-3',
-              userName: 'Emily Rodriguez',
-              userAvatar: undefined,
-              bookId,
-              editionId,
-              userBookId: 'ub-3',
-              rating: 4.5,
-              reviewText: 'Couldn\'t put it down! From the very first page, I was hooked. The narrative flow is exceptional, and the author has a gift for storytelling that makes even mundane details fascinating. I appreciated the depth of research evident throughout the book.',
-              createdAt: '2024-03-05T09:15:00Z',
-              updatedAt: '2024-03-05T09:15:00Z',
-              helpfulCount: 35,
-              isHelpfulByCurrentUser: false,
-            },
-            {
-              id: 'dummy-4',
-              userId: 'user-4',
-              userName: 'David Thompson',
-              userAvatar: undefined,
-              bookId,
-              editionId,
-              userBookId: 'ub-4',
-              rating: 3.5,
-              reviewText: 'Good book overall. It has some really interesting perspectives and the writing is clear. I would have liked more depth in certain areas, but it serves as a great introduction to the topic.',
-              createdAt: '2024-02-28T16:45:00Z',
-              updatedAt: '2024-02-28T16:45:00Z',
-              helpfulCount: 15,
-              isHelpfulByCurrentUser: false,
-            },
-            {
-              id: 'dummy-5',
-              userId: 'user-5',
-              userName: 'Lisa Park',
-              userAvatar: undefined,
-              bookId,
-              editionId,
-              userBookId: 'ub-5',
-              rating: 2.5,
-              reviewText: 'Had high expectations but was somewhat disappointed. The concept is interesting, but the execution falls short. Some chapters felt rushed while others dragged on. It\'s not a bad book, just not what I was hoping for.',
-              createdAt: '2024-02-20T11:30:00Z',
-              updatedAt: '2024-02-20T11:30:00Z',
-              helpfulCount: 8,
-              isHelpfulByCurrentUser: false,
-            },
-            {
-              id: 'dummy-6',
-              userId: 'user-6',
-              userName: 'James Wilson',
-              userAvatar: undefined,
-              bookId,
-              editionId,
-              userBookId: 'ub-6',
-              rating: 5,
-              reviewText: 'Absolutely phenomenal! This is a masterpiece. Every page offers something valuable. The research is impeccable, the writing is beautiful, and the insights are profound. This will be a book I return to again and again.',
-              createdAt: '2024-02-15T13:00:00Z',
-              updatedAt: '2024-02-15T13:00:00Z',
-              helpfulCount: 67,
-              isHelpfulByCurrentUser: false,
-            },
-            {
-              id: 'dummy-7',
-              userId: 'user-7',
-              userName: 'Anna Martinez',
-              userAvatar: undefined,
-              bookId,
-              editionId,
-              userBookId: 'ub-7',
-              rating: 1.5,
-              reviewText: 'Unfortunately, this book wasn\'t for me. I struggled to stay engaged and found the content to be somewhat superficial. The writing style didn\'t resonate with me either. Others might enjoy it, but it missed the mark for my taste.',
-              createdAt: '2024-02-10T08:20:00Z',
-              updatedAt: '2024-02-10T08:20:00Z',
-              helpfulCount: 12,
-              isHelpfulByCurrentUser: false,
-            },
-          ];
-          setReviews(dummyReviews);
-        } else {
-          setReviews(allReviews);
-        }
+        setReviews(pagedResponse.reviews);
+        setTotalPages(pagedResponse.totalPages);
+        setTotalReviews(pagedResponse.totalElements);
+        setHasNextPage(pagedResponse.hasNext);
+        setHasPreviousPage(pagedResponse.hasPrevious);
 
         // If user is authenticated and has a book in collection, fetch their review for this session
         if (isAuthenticated && userBookId) {
@@ -220,13 +126,14 @@ export default function EditionDetailsPage() {
         }
       } catch (err) {
         console.error('Failed to fetch reviews:', err);
+        showError('Failed to load reviews', 'Error');
       } finally {
         setLoadingReviews(false);
       }
     };
 
     fetchReviews();
-  }, [bookId, editionId, isAuthenticated, userBookId]);
+  }, [bookId, editionId, isAuthenticated, userBookId, currentPage, pageSize]);
 
   // Fetch friends' reviews
   useEffect(() => {
@@ -249,23 +156,64 @@ export default function EditionDetailsPage() {
     fetchFriendsReviews();
   }, [bookId, editionId, isAuthenticated]);
 
+  // Reset page to 0 when rating filter or sort option changes
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [selectedRatingFilter, reviewSortOption]);
+
+  // Helper function to refetch reviews after modifications
+  const refetchReviews = async () => {
+    try {
+      const pagedResponse: PagedReviewResponse = await reviewService.getReviewsForBookPaginated(
+        bookId, 
+        editionId, 
+        currentPage, 
+        pageSize
+      );
+      
+      setReviews(pagedResponse.reviews);
+      setTotalPages(pagedResponse.totalPages);
+      setTotalReviews(pagedResponse.totalElements);
+      setHasNextPage(pagedResponse.hasNext);
+      setHasPreviousPage(pagedResponse.hasPrevious);
+
+      // Refetch user review
+      if (isAuthenticated && userBookId) {
+        const userReviewData = await reviewService.getUserReviewForSession(userBookId);
+        setUserReview(userReviewData);
+      }
+    } catch (err) {
+      console.error('Failed to refetch reviews:', err);
+    }
+  };
+
   const handleSubmitReview = async (rating: number, reviewText: string, reviewHtml: string) => {
     if (!userBookId) {
       showWarning('Please add this book to your collection first');
       return;
     }
 
+    // Validate book status - only allow reviews for completed or did not finish books
+    if (currentBookStatus !== ReadingStatus.COMPLETED && currentBookStatus !== ReadingStatus.DID_NOT_FINISH) {
+      showError(
+        'You can only review books that you have completed or marked as "Did Not Finish"',
+        'Review Not Allowed'
+      );
+      return;
+    }
+
     try {
       if (userReview) {
         // Update existing review
-        const updated = await reviewService.updateReview(userReview.id, { rating, reviewText, reviewHtml });
-        setUserReview(updated);
+        await reviewService.updateReview(userReview.id, { rating, reviewText, reviewHtml });
         
-        // Update in reviews list
-        setReviews(prev => prev.map(r => r.id === updated.id ? updated : r));
+        // Refetch reviews from MongoDB after successful update
+        await refetchReviews();
+        
+        showSuccess('Your review has been updated successfully!', 'Review Updated');
       } else {
         // Create new review
-        const newReview = await reviewService.createReview({
+        await reviewService.createReview({
           bookId,
           editionId,
           userBookId,
@@ -273,22 +221,53 @@ export default function EditionDetailsPage() {
           reviewText,
           reviewHtml,
         });
-        setUserReview(newReview);
-        setReviews(prev => [newReview, ...prev]);
+        
+        // Refetch reviews from MongoDB after successful create
+        await refetchReviews();
+        
+        showSuccess('Your review has been posted successfully!', 'Review Posted');
       }
       
       setShowReviewModal(false);
     } catch (error) {
       console.error('Error submitting review:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit review. Please try again.';
+      showError(errorMessage, 'Submission Failed');
       throw error;
     }
   };
 
   const handleEditReview = () => {
+    // Validate book status - only allow editing reviews for completed or did not finish books
+    if (currentBookStatus !== ReadingStatus.COMPLETED && currentBookStatus !== ReadingStatus.DID_NOT_FINISH) {
+      showError(
+        'You can only edit reviews for books that are marked as completed or \"Did Not Finish\"',
+        'Edit Not Allowed'
+      );
+      return;
+    }
+    
     setShowReviewModal(true);
   };
 
   const handleDeleteReview = async () => {
+    if (!userReview) return;
+
+    try {
+      await reviewService.deleteReview(userReview.id);
+      
+      // Refetch reviews from MongoDB after successful deletion
+      await refetchReviews();
+      
+      showSuccess('Your review has been deleted successfully', 'Review Deleted');
+    } catch (error) {
+      console.error('Error deleting review:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete review. Please try again.';
+      showError(errorMessage, 'Deletion Failed');
+    }
+  };
+
+  const handleDeleteReviewLegacy = async () => {
     if (!userReview) return;
     
     setConfirmModal({
@@ -344,6 +323,15 @@ export default function EditionDetailsPage() {
 
     if (!userBookId) {
       showWarning('Please add this book to your collection first before writing a review');
+      return;
+    }
+
+    // Validate book status - only allow reviews for completed or did not finish books
+    if (currentBookStatus !== ReadingStatus.COMPLETED && currentBookStatus !== ReadingStatus.DID_NOT_FINISH) {
+      showError(
+        'You can only review books that you have completed or marked as "Did Not Finish"',
+        'Review Not Allowed'
+      );
       return;
     }
 
@@ -428,7 +416,23 @@ export default function EditionDetailsPage() {
         });
         setCurrentBookStatus(status);
         setUserBookId(newBook.id);
-        showSuccess(`"${edition.title}" added to your collection!`);
+        
+        const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+        const username = currentUser.username || user?.username || 'user';
+        
+        showSuccess(
+          `"${edition.title}" added to your collection!`,
+          'Book Added',
+          5000,
+          [
+            {
+              label: 'View Collection',
+              onClick: () => router.push(`/${username}/lists`),
+              variant: 'primary',
+              closeOnClick: true,
+            }
+          ]
+        );
       }
     } catch (err) {
       showError(err instanceof Error ? err.message : 'Failed to update book');
@@ -1005,12 +1009,18 @@ export default function EditionDetailsPage() {
                 Be the first to share your thoughts about this book!
               </p>
               {isAuthenticated && userBookId && (
-                <button
-                  onClick={handleWriteReview}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
-                >
-                  Write the First Review
-                </button>
+                currentBookStatus === ReadingStatus.COMPLETED || currentBookStatus === ReadingStatus.DID_NOT_FINISH ? (
+                  <button
+                    onClick={handleWriteReview}
+                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
+                  >
+                    Write the First Review
+                  </button>
+                ) : (
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    Reviews can only be written after completing or marking as "Did Not Finish"
+                  </p>
+                )
               )}
             </div>
           ) : (
@@ -1019,8 +1029,8 @@ export default function EditionDetailsPage() {
               <div className="mb-8">
                 <RatingDistribution
                   ratings={reviews.map(r => r.rating)}
-                  totalReviews={reviews.length}
-                  averageRating={reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length}
+                  totalReviews={totalReviews}
+                  averageRating={reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0}
                   onRatingFilter={setSelectedRatingFilter}
                   selectedRating={selectedRatingFilter}
                 />
@@ -1062,7 +1072,7 @@ export default function EditionDetailsPage() {
                 </div>
               )}
 
-              {/* Your Reviews Section */}
+              {/* Your Review Section */}
               {isAuthenticated && (
                 <div className="mb-8">
                   <div className="flex items-center gap-2 mb-4">
@@ -1070,28 +1080,26 @@ export default function EditionDetailsPage() {
                       <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                     </svg>
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      Your Review{sortedUserReviews.length > 1 ? 's' : ''} {sortedUserReviews.length > 0 && `(${sortedUserReviews.length})`}
+                      Your Review
                     </h3>
                   </div>
-                  {sortedUserReviews.length > 0 ? (
+                  {userReview ? (
                     <div className="space-y-4">
-                      {sortedUserReviews.map((review) => (
-                        <BookReview
-                          key={review.id}
-                          userName={review.userName}
-                          userAvatar={review.userAvatar}
-                          rating={review.rating}
-                          date={review.createdAt}
-                          reviewText={review.reviewText}
-                          reviewHtml={review.reviewHtml}
-                          helpful={review.helpfulCount}
-                          isHelpfulByCurrentUser={review.isHelpfulByCurrentUser}
-                          onToggleHelpful={() => handleToggleHelpful(review.id)}
-                          onEdit={handleEditReview}
-                          onDelete={handleDeleteReview}
-                          isCurrentUserReview={true}
-                        />
-                      ))}
+                      <BookReview
+                        key={userReview.id}
+                        userName={userReview.userName}
+                        userAvatar={userReview.userAvatar}
+                        rating={userReview.rating}
+                        date={userReview.createdAt}
+                        reviewText={userReview.reviewText}
+                        reviewHtml={userReview.reviewHtml}
+                        helpful={userReview.helpfulCount}
+                        isHelpfulByCurrentUser={userReview.isHelpfulByCurrentUser}
+                        onToggleHelpful={() => handleToggleHelpful(userReview.id)}
+                        onEdit={handleEditReview}
+                        onDelete={handleDeleteReview}
+                        isCurrentUserReview={true}
+                      />
                     </div>
                   ) : (
                     <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-6 text-center">
@@ -1102,12 +1110,19 @@ export default function EditionDetailsPage() {
                         You haven&apos;t reviewed this book yet
                       </p>
                       {userBookId ? (
-                        <button
-                          onClick={handleWriteReview}
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
-                        >
-                          Write Your Review
-                        </button>
+                        currentBookStatus === ReadingStatus.COMPLETED || currentBookStatus === ReadingStatus.DID_NOT_FINISH ? (
+                          <button
+                            onClick={handleWriteReview}
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
+                          >
+                            Write Your Review
+                          </button>
+                        ) : (
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
+                            <p className="mb-2">Reviews can only be written after you&apos;ve completed or marked the book as "Did Not Finish"</p>
+                            <p className="text-xs">Current status: <span className="font-semibold">{getStatusLabel(currentBookStatus!)}</span></p>
+                          </div>
+                        )
                       ) : (
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           Add this book to your collection to write a review
@@ -1225,6 +1240,64 @@ export default function EditionDetailsPage() {
               {sortedUserReviews.length === 0 && sortedFriendReviews.length === 0 && sortedOtherReviews.length === 0 && selectedRatingFilter !== null && (
                 <div className="text-center py-8 text-gray-600 dark:text-gray-400">
                   No reviews with {selectedRatingFilter} stars rating
+                </div>
+              )}
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="mt-8 flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+                    disabled={!hasPreviousPage}
+                    className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  
+                  <div className="flex items-center gap-2">
+                    {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                      let pageNum;
+                      if (totalPages <= 5) {
+                        pageNum = i;
+                      } else if (currentPage < 3) {
+                        pageNum = i;
+                      } else if (currentPage > totalPages - 4) {
+                        pageNum = totalPages - 5 + i;
+                      } else {
+                        pageNum = currentPage - 2 + i;
+                      }
+                      
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`px-4 py-2 rounded-lg transition-colors ${
+                            currentPage === pageNum
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+                          }`}
+                        >
+                          {pageNum + 1}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
+                    disabled={!hasNextPage}
+                    className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                  
+                  <div className="ml-4 text-sm text-gray-600 dark:text-gray-400">
+                    Showing {currentPage * pageSize + 1}-{Math.min((currentPage + 1) * pageSize, totalReviews)} of {totalReviews} reviews
+                  </div>
                 </div>
               )}
             </>
@@ -1363,6 +1436,17 @@ export default function EditionDetailsPage() {
           onClose={hideNotification}
         />
       )}
+
+      {/* Notification */}
+      <Notification
+        isOpen={notification.isOpen}
+        title={notification.title}
+        message={notification.message}
+        type={notification.type}
+        onClose={hideNotification}
+        duration={notification.duration}
+        actions={notification.actions}
+      />
 
       {/* Confirm Modal */}
       <ConfirmModal

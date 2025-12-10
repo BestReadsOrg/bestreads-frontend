@@ -17,6 +17,16 @@ export interface Review {
   isHelpfulByCurrentUser?: boolean;
 }
 
+export interface PagedReviewResponse {
+  reviews: Review[];
+  currentPage: number;
+  totalPages: number;
+  totalElements: number;
+  pageSize: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
 export interface CreateReviewDTO {
   bookId: string;
   editionId: string;
@@ -45,6 +55,29 @@ class ReviewService {
     } catch (error) {
       console.error('Error fetching reviews:', error);
       return [];
+    }
+  }
+
+  /**
+   * Get all reviews for a specific book/edition with pagination
+   */
+  async getReviewsForBookPaginated(bookId: string, editionId: string, page: number = 0, size: number = 10): Promise<PagedReviewResponse> {
+    try {
+      const response = await api.get(`${this.BASE_URL}/book/${bookId}/edition/${editionId}/paginated`, {
+        params: { page, size }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching paginated reviews:', error);
+      return {
+        reviews: [],
+        currentPage: 0,
+        totalPages: 0,
+        totalElements: 0,
+        pageSize: size,
+        hasNext: false,
+        hasPrevious: false
+      };
     }
   }
 
@@ -78,23 +111,38 @@ class ReviewService {
    * Create a new review
    */
   async createReview(reviewData: CreateReviewDTO): Promise<Review> {
-    const response = await api.post(this.BASE_URL, reviewData);
-    return response.data;
+    try {
+      const response = await api.post(this.BASE_URL, reviewData);
+      return response.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Failed to create review';
+      throw new Error(errorMessage);
+    }
   }
 
   /**
    * Update an existing review
    */
   async updateReview(reviewId: string, reviewData: UpdateReviewDTO): Promise<Review> {
-    const response = await api.put(`${this.BASE_URL}/${reviewId}`, reviewData);
-    return response.data;
+    try {
+      const response = await api.put(`${this.BASE_URL}/${reviewId}`, reviewData);
+      return response.data;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Failed to update review';
+      throw new Error(errorMessage);
+    }
   }
 
   /**
    * Delete a review
    */
   async deleteReview(reviewId: string): Promise<void> {
-    await api.delete(`${this.BASE_URL}/${reviewId}`);
+    try {
+      await api.delete(`${this.BASE_URL}/${reviewId}`);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Failed to delete review';
+      throw new Error(errorMessage);
+    }
   }
 
   /**

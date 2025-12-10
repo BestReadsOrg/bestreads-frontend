@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BookReviewProps } from './book-review.types';
 import { StarRating } from '../star-rating';
 
@@ -24,6 +24,7 @@ export const BookReview: React.FC<BookReviewProps> = ({
   const [helpfulCount, setHelpfulCount] = useState(helpful || 0);
   const [isHelpful, setIsHelpful] = useState(isHelpfulByCurrentUser);
   const [isTogglingHelpful, setIsTogglingHelpful] = useState(false);
+  const [revealedSpoilers, setRevealedSpoilers] = useState<Set<number>>(new Set());
 
   const contentToDisplay = reviewHtml || reviewText;
   const shouldTruncate = contentToDisplay.length > 300;
@@ -31,13 +32,44 @@ export const BookReview: React.FC<BookReviewProps> = ({
     ? contentToDisplay 
     : contentToDisplay.substring(0, 300) + '...';
 
+  // Handle spoiler click
+  useEffect(() => {
+    if (!reviewHtml) return;
+
+    const handleSpoilerClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName.toLowerCase() === 'spoiler') {
+        const spoilerIndex = parseInt(target.dataset.spoilerIndex || '0', 10);
+        setRevealedSpoilers(prev => {
+          const newSet = new Set(prev);
+          if (newSet.has(spoilerIndex)) {
+            newSet.delete(spoilerIndex);
+          } else {
+            newSet.add(spoilerIndex);
+          }
+          return newSet;
+        });
+      }
+    };
+
+    document.addEventListener('click', handleSpoilerClick);
+    return () => document.removeEventListener('click', handleSpoilerClick);
+  }, [reviewHtml]);
+
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Recently';
+      }
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    } catch (error) {
+      return 'Recently';
+    }
   };
 
   const handleToggleHelpful = async () => {
@@ -104,10 +136,18 @@ export const BookReview: React.FC<BookReviewProps> = ({
 
       {/* Review Text */}
       {reviewHtml ? (
-        <div 
-          className="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4 review-content"
-          dangerouslySetInnerHTML={{ __html: displayContent }}
-        />
+        <div className="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed mb-4 review-content">
+          <div dangerouslySetInnerHTML={{ 
+            __html: displayContent.replace(
+              /<spoiler>(.*?)<\/spoiler>/g, 
+              (match, content, offset) => {
+                const index = displayContent.substring(0, offset).split('<spoiler>').length - 1;
+                const isRevealed = revealedSpoilers.has(index);
+                return `<spoiler data-spoiler-index="${index}" class="spoiler ${isRevealed ? 'revealed' : ''}" title="${isRevealed ? 'Click to hide spoiler' : 'Click to reveal spoiler'}">${isRevealed ? content : '███████'}</spoiler>`;
+              }
+            )
+          }} />
+        </div>
       ) : (
         <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 whitespace-pre-wrap">
           {displayContent}
@@ -137,30 +177,32 @@ export const BookReview: React.FC<BookReviewProps> = ({
       {/* Footer */}
       <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
         {/* Helpful Button */}
-        <button
-          onClick={handleToggleHelpful}
-          disabled={isTogglingHelpful || !onToggleHelpful}
-          className={`flex items-center gap-2 text-sm transition-colors ${
-            isHelpful
-              ? 'text-blue-600 dark:text-blue-400'
-              : 'text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400'
-          } ${!onToggleHelpful ? 'cursor-not-allowed opacity-50' : ''}`}
-        >
-          <svg
-            className="w-5 h-5"
-            fill={isHelpful ? 'currentColor' : 'none'}
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        {!isCurrentUserReview && (
+          <button
+            onClick={handleToggleHelpful}
+            disabled={isTogglingHelpful || !onToggleHelpful}
+            className={`flex items-center gap-2 text-sm transition-colors ${
+              isHelpful
+                ? 'text-blue-600 dark:text-blue-400'
+                : 'text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400'
+            } ${!onToggleHelpful ? 'cursor-not-allowed opacity-50' : ''}`}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
-            />
-          </svg>
-          <span>{isHelpful ? 'Helpful' : 'Mark as helpful'} {helpfulCount > 0 && `(${helpfulCount})`}</span>
-        </button>
+            <svg
+              className="w-5 h-5"
+              fill={isHelpful ? 'currentColor' : 'none'}
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+              />
+            </svg>
+            <span>{isHelpful ? 'Helpful' : 'Mark as helpful'} {helpfulCount > 0 && `(${helpfulCount})`}</span>
+          </button>
+        )}
 
         {/* Edit/Delete Buttons for Current User's Review */}
         {isCurrentUserReview && (
@@ -193,14 +235,25 @@ export const BookReview: React.FC<BookReviewProps> = ({
 
       <style jsx>{`
         .review-content :global(spoiler) {
-          background-color: currentColor;
-          color: transparent;
+          background-color: #1f2937;
+          color: #1f2937;
           cursor: pointer;
           transition: all 0.2s ease;
-          padding: 0 2px;
-          border-radius: 2px;
+          padding: 2px 4px;
+          border-radius: 3px;
+          user-select: none;
+          position: relative;
+          display: inline-block;
         }
-        .review-content :global(spoiler:hover) {
+        .review-content :global(spoiler.revealed) {
+          background-color: transparent;
+          color: inherit;
+        }
+        .dark .review-content :global(spoiler) {
+          background-color: #e5e7eb;
+          color: #e5e7eb;
+        }
+        .dark .review-content :global(spoiler.revealed) {
           background-color: transparent;
           color: inherit;
         }

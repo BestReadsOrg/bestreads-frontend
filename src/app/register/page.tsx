@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import useAuth from '@/hooks/useAuth';
+import { useNotification } from '@/hooks/useNotification';
+import { Notification } from '@/packages/shared/components/notification';
 import { AuthForm, defaultRegisterData, passwordRequirements } from '@/app/auth';
 
 /**
@@ -19,6 +21,7 @@ import { AuthForm, defaultRegisterData, passwordRequirements } from '@/app/auth'
 export default function RegisterPage() {
   const router = useRouter();
   const { register } = useAuth();
+  const { notification, showError, showSuccess, hideNotification } = useNotification();
   
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -118,24 +121,37 @@ export default function RegisterPage() {
 
     try {
       await register(data.username, data.email, data.password);
-      router.push('/dashboard');
+      showSuccess('Account created successfully!', 'Welcome to BestReads');
+      // Navigate to user's dashboard after successful registration
+      setTimeout(() => {
+        router.push(`/${data.username}/dashboard`);
+      }, 1500);
     } catch (error) {
-      setErrors({
-        general: error instanceof Error ? error.message : 'Registration failed. Please try again.'
-      });
+      const errorMessage = error instanceof Error ? error.message : 'Registration failed. Please try again.';
+      showError(errorMessage, 'Registration Failed');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <AuthForm
-      {...defaultRegisterData}
-      onAction={handleAction}
-      onFieldChange={handleFieldChange}
-      formData={formData}
-      errors={errors}
-      loading={isLoading}
-    />
+    <>
+      <Notification
+        isOpen={notification.isOpen}
+        type={notification.type}
+        title={notification.title}
+        message={notification.message}
+        onClose={hideNotification}
+        duration={notification.duration}
+      />
+      <AuthForm
+        {...defaultRegisterData}
+        onAction={handleAction}
+        onFieldChange={handleFieldChange}
+        formData={formData}
+        errors={errors}
+        loading={isLoading}
+      />
+    </>
   );
 }

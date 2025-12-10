@@ -94,7 +94,22 @@ function SearchPageContent() {
         [ReadingStatus.DID_NOT_FINISH]: 'Did Not Finish',
       };
 
-      showSuccess(`"${book.title}" added to ${statusLabels[status]}!`, 'Book Added');
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const username = currentUser.username || 'user';
+      
+      showSuccess(
+        `"${book.title}" added to ${statusLabels[status]}!`,
+        'Book Added',
+        5000,
+        [
+          {
+            label: 'View Collection',
+            onClick: () => router.push(`/${username}/lists`),
+            variant: 'primary',
+            closeOnClick: true,
+          }
+        ]
+      );
     } catch (err) {
       showError(err instanceof Error ? err.message : 'Failed to add book', 'Error');
     }
@@ -364,6 +379,7 @@ function SearchPageContent() {
         type={notification.type}
         onClose={hideNotification}
         duration={notification.duration}
+        actions={notification.actions}
       />
     </div>
   );
